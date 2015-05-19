@@ -1,5 +1,6 @@
-package org.miabis.converter;
+package org.miabis.converter.batch.writers;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -15,14 +16,14 @@ import org.springframework.util.Assert;
 import eu.bbmri_eric.miabis.Biobank;
 import eu.bbmri_eric.miabis.Miabis;
 
-public class ExampleItemWriter implements ResourceAwareItemWriterItemStream<Biobank> {
+public class MiabisXMLWriter implements ResourceAwareItemWriterItemStream<Biobank> {
 
 	private Miabis miabis;
 	private JAXBContext jc;
     private Marshaller marshaller;
 	private Resource resource;
 	
-	public ExampleItemWriter() throws JAXBException {
+	public MiabisXMLWriter() throws JAXBException {
 		jc = JAXBContext.newInstance("eu.bbmri_eric.miabis");
         marshaller = jc.createMarshaller();
 		
@@ -47,7 +48,14 @@ public class ExampleItemWriter implements ResourceAwareItemWriterItemStream<Biob
 
 	@Override
 	public void open(ExecutionContext executionContext) throws ItemStreamException {
-		Assert.state(resource.exists(), "Output resource must exist");
+		
+			try {
+				if(!resource.exists()) resource.getFile().createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		
+		//Assert.state(resource.exists(), "Output resource must exist");
 	}
 
 
