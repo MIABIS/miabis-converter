@@ -1,4 +1,4 @@
-package org.miabis.converter;
+package org.miabis.converter.batch;
 
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
@@ -16,6 +16,9 @@ public class BioBankFieldSetMapper implements FieldSetMapper<Biobank>{
 		bBank.setAcronym(fieldSet.readString(2));
 		bBank.setUrl(fieldSet.readString(3));
 		bBank.setDescription(fieldSet.readString(4));
+		bBank.setJuristicPerson(fieldSet.readString(5));
+		
+		//fieldSet.readString("id");
 		
 		return bBank;
 	}
