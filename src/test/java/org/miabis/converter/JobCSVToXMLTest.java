@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@ContextConfiguration(locations={"/launch-context.xml"})
+@ContextConfiguration(locations={"/spring/batch/config/config.xml", "/spring/batch/jobs/job-csv-xml.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ExampleJobConfigurationTests {
+public class JobCSVToXMLTest {
 	
 	@Autowired
 	private JobLauncher jobLauncher;
@@ -30,5 +30,4 @@ public class ExampleJobConfigurationTests {
 	public void testLaunchJob() throws Exception {
 		jobLauncher.run(job, new JobParameters());
 	}
-	
 }
