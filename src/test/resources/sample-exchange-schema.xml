@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<miabis xmlns="http://www.bbmri-eric.eu/miabis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.bbmri-eric.eu/miabis sample-exchange-schema.xsd ">
+  <sample>
+    <id>idvalue0</id>
+    <parentSampleId>idvalue1</parentSampleId>
+    <materialType>RNA</materialType>
+    <storageTemperature>RT</storageTemperature>
+    <sampledTime>2001-12-31T12:00:00</sampledTime>
+    <anatomicalSite id="idvalue2" xsi:type="OntologyTerm">
+      <ontology>ontology</ontology>
+      <code>code</code>
+    </anatomicalSite>
+    <biobank>
+      <id>idvalue3</id>
+      <acronym>acronym</acronym>
+      <name>name</name>
+      <url>http://tempuri.org</url>
+      <country>country</country>
+      <contactInformation>idvalue0</contactInformation>
+      <description>description</description>
+    </biobank>
+    <samplecollection/>
+    <study>
+      <id>idvalue4</id>
+      <name>name</name>
+      <description>description</description>
+      <principalInvestigator>principalInvestigator</principalInvestigator>
+      <contactInformation>idvalue0</contactInformation>
+      <studyDesign>Case-control</studyDesign>
+      <sex>Male</sex>
+      <ageLow>1</ageLow>
+      <ageHigh>1</ageHigh>
+      <ageUnit>year</ageUnit>
+      <dataCategory>Biological samples</dataCategory>
+      <materialType>RNA</materialType>
+      <totalNumberOfParticipants>1</totalNumberOfParticipants>
+      <totalNumberOfDonors>1</totalNumberOfDonors>
+      <inclusionCriteria>Health status</inclusionCriteria>
+    </study>
+  </sample>
+</miabis>
