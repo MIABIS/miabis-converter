@@ -16,7 +16,13 @@
       <name>name</name>
       <url>http://tempuri.org</url>
       <country>country</country>
-      <contactInformation>idvalue0</contactInformation>
+      <contactInformation id="1">
+      	<firstname>Pepito</firstname>
+		<lastname>Perez</lastname>
+		<address>pepito@hotmail.com</address>
+		<city>Munich</city>
+		<country>DE</country>
+	  </contactInformation>
       <description>description</description>
     </biobank>
     <samplecollection/>
@@ -25,7 +31,6 @@
       <name>name</name>
       <description>description</description>
       <principalInvestigator>principalInvestigator</principalInvestigator>
-      <contactInformation>idvalue0</contactInformation>
       <studyDesign>Case-control</studyDesign>
       <sex>Male</sex>
       <ageLow>1</ageLow>
