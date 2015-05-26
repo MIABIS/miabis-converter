@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
+
+	<description>Job that reads XML files and transforms them into tabulated files</description>
+ 	
+	<batch:job id="job1">
+		<batch:step id="step1"  >			
+			<batch:tasklet transaction-manager="transactionManager" start-limit="100" >
+				<batch:chunk reader="xmlItemReader" writer="tabFileItemWriter" commit-interval="100" />
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	
+	<!-- XML Reader -->
+	<bean id="xmlItemReader" class="org.springframework.batch.item.xml.StaxEventItemReader" scope="step">
+		<property name="fragmentRootElementName" value="sample" />
+		<property name="resource" value="file:/Users/jose/Documents/MIABIS-workspace/miabis-converter/src/test/resources/sample-exchange-schema.xml" />
+		<property name="unmarshaller" ref="sampleUnmarshaller" />
+		<property name="strict" value="true"/>
+    </bean>
+ 
+    <!-- Read and map values to object, via jaxb2 -->
+    <bean id="sampleUnmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="contextPath" value="org.miabis.exchange.schema" />
+    </bean>
+    
+    <bean id="tabFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+		<!-- write to this tab file -->
+		<property name="resource" value="file:out/sample.tab" />
+		<property name="shouldDeleteIfExists" value="true" />
+ 
+		<property name="lineAggregator">
+		  	<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter">
+					<util:constant static-field="org.springframework.batch.item.file.transform.DelimitedLineTokenizer.DELIMITER_TAB" />
+				</property>
+				<property name="fieldExtractor">
+					<bean class="org.miabis.converter.transform.SampleFieldExtractor"/>
+				</property>
+		   	</bean>
+		</property>
+  </bean>
+	
+	
+	
+
+
+</beans>
