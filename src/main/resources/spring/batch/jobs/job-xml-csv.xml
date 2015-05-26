@@ -20,7 +20,7 @@
 	<!-- XML Reader -->
 	<bean id="xmlItemReader" class="org.springframework.batch.item.xml.StaxEventItemReader" scope="step">
 		<property name="fragmentRootElementName" value="sample" />
-		<property name="resource" value="file:/Users/jose/Documents/MIABIS-workspace/miabis-converter/src/test/resources/sample-exchange-schema.xml" />
+		<property name="resource" value="#{jobParameters['xml.input']}" />
 		<property name="unmarshaller" ref="sampleUnmarshaller" />
 		<property name="strict" value="true"/>
     </bean>
@@ -32,7 +32,7 @@
     
     <bean id="tabFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
 		<!-- write to this tab file -->
-		<property name="resource" value="file:out/sample.tab" />
+		<property name="resource" value="#{jobParameters['tab.output']}" />
 		<property name="shouldDeleteIfExists" value="true" />
  
 		<property name="lineAggregator">
