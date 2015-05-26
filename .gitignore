@@ -1,6 +1,9 @@
 # Classpath
 .classpath
 
+#Settings
+.settings
+
 # Project config
 .project
 
