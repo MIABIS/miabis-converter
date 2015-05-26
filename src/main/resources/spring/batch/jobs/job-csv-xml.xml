@@ -22,7 +22,9 @@
  		<property name="lineMapper">
 			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
 				<property name="lineTokenizer">
-					<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer"/>
+					<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="names" value="id,name,description,quantity" />
+					</bean>
 				</property>
 				<property name="fieldSetMapper">
 					<bean class="org.miabis.converter.batch.BioBankFieldSetMapper" />
