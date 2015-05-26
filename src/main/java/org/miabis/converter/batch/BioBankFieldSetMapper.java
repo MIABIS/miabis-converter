@@ -1,10 +1,9 @@
 package org.miabis.converter.batch;
 
+import org.miabis.exchange.schema.Biobank;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
-
-import eu.bbmri_eric.miabis.Biobank;
 
 public class BioBankFieldSetMapper implements FieldSetMapper<Biobank>{
 
@@ -16,7 +15,6 @@ public class BioBankFieldSetMapper implements FieldSetMapper<Biobank>{
 		bBank.setAcronym(fieldSet.readString(2));
 		bBank.setUrl(fieldSet.readString(3));
 		bBank.setDescription(fieldSet.readString(4));
-		bBank.setJuristicPerson(fieldSet.readString(5));
 		
 		//fieldSet.readString("id");
 		
