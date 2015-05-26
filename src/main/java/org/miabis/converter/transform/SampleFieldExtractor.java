@@ -1,6 +1,5 @@
 package org.miabis.converter.transform;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,6 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.miabis.exchange.schema.Biobank;
+import org.miabis.exchange.schema.ContactInformation;
 import org.miabis.exchange.schema.OntologyTerm;
 import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
@@ -19,8 +19,42 @@ import org.springframework.batch.item.file.transform.FieldExtractor;
 public class SampleFieldExtractor implements FieldExtractor<Sample> {
 	
 	private final String DELIMITER = "|";
+	private final String CONTACT_DELIMITER = ",";
 	
-	public String processListValues(List<?> lst){
+	/**
+	 * Returns a string that represents a contact. The string is delimited by CONTACT_DELIMITER
+	 * @param contact
+	 * @return
+	 */
+	private String processContact(ContactInformation contact){
+		
+		String cString = contact.getFirstname() + CONTACT_DELIMITER + contact.getLastname()  + CONTACT_DELIMITER + contact.getPhone()  + CONTACT_DELIMITER + contact.getEmail()
+				+ CONTACT_DELIMITER + contact.getAddress() + CONTACT_DELIMITER + contact.getZip() + CONTACT_DELIMITER + contact.getCity() + CONTACT_DELIMITER + contact.getCountry();
+		
+		return cString;
+	}
+	
+	/**
+	 * Calls processContact and concatenates the resulting String with DELIMITER
+	 * @param contactLst
+	 * @return
+	 */
+	private String processContactList(List<ContactInformation> contactLst){
+		
+		List<String> cStrLst = new ArrayList<String>();
+		for(ContactInformation ci : contactLst){
+			cStrLst.add(processContact(ci));
+		}
+		
+		return String.join(DELIMITER, cStrLst);
+	}
+	
+	/**
+	 * Extracts the value of each object in the list and returns a String of values concatenated by DELIMITER. 
+	 * @param lst
+	 * @return
+	 */
+	private String processListValues(List<?> lst){
 		
 		List<String> values = new ArrayList<String>();
 		
@@ -74,20 +108,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(bb.getName());
 		values.add(bb.getUrl());
 		
-		//Contact info
-		/*List<ContactInformation> cInfos = bb.getContactInformation();
-		List<String> ciValues = new ArrayList<String>();
-		for(ContactInformation ci : cInfos){
-			
-			String cis = ci.getFirstname() + INFIELD_DELIMITER + ci.getLastname() + INFIELD_DELIMITER +
-					ci.getPhone() + INFIELD_DELIMITER + ci.getEmail() + INFIELD_DELIMITER + 
-					ci.getAddress() + INFIELD_DELIMITER + ci.getZip() + INFIELD_DELIMITER + 
-					ci.getCity() + INFIELD_DELIMITER + ci.getCountry();
-			
-			ciValues.add(cis);			
-		}
-		
-		values.add(String.join(DELIMITER, ciValues));*/
+		values.add(processContactList(bb.getContactInformation()));
 		
 		values.add(bb.getDescription());
 		
@@ -111,7 +132,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(processListValues(sc.getCollectionType()));
 		values.add(processListValues(sc.getDiseases()));
 		
-		//TODO Contact information
+		values.add(processContactList(sc.getContactInformation()));
 		
 		//Study
 		Study study = sample.getStudy();
@@ -119,7 +140,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(study.getId());
 		values.add(String.join(DELIMITER, study.getPrincipalInvestigator()));
 		
-		//TODO Contact information
+		values.add(processContactList(study.getContactInformation()));
 		
 		values.add(processListValues(study.getStudyDesign()));
 		values.add(processListValues(study.getSex()));
