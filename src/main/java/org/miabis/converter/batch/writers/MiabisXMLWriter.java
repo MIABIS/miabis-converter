@@ -7,14 +7,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.miabis.exchange.schema.Biobank;
+import org.miabis.exchange.schema.Miabis;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.file.ResourceAwareItemWriterItemStream;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
-
-import eu.bbmri_eric.miabis.Biobank;
-import eu.bbmri_eric.miabis.Miabis;
 
 public class MiabisXMLWriter implements ResourceAwareItemWriterItemStream<Biobank> {
 
@@ -33,11 +32,7 @@ public class MiabisXMLWriter implements ResourceAwareItemWriterItemStream<Bioban
 	
 	@Override
 	public void write(List<? extends Biobank> items) throws Exception {
-		for(Biobank e : items)
-			miabis.getBiobank().add(e);
 		
-		
-		marshaller.marshal(miabis, resource.getFile());
 	}
 
 
