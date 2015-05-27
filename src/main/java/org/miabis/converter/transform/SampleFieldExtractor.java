@@ -10,6 +10,7 @@ import java.util.ListIterator;
 
 import org.miabis.exchange.schema.Biobank;
 import org.miabis.exchange.schema.ContactInformation;
+import org.miabis.exchange.schema.Disease;
 import org.miabis.exchange.schema.OntologyTerm;
 import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
@@ -47,6 +48,28 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		}
 		
 		return String.join(DELIMITER, cStrLst);
+	}
+	
+	/**
+	 * Returns a string that represents a disease. The string is delimited by CONTACT_DELIMITER
+	 * @param disease
+	 * @return
+	 */
+	private String processDisease(Disease disease){
+		
+		String dString = disease.getOntology() + CONTACT_DELIMITER + disease.getVersion()  + CONTACT_DELIMITER + disease.getCode()  + CONTACT_DELIMITER + disease.getDescription()
+				+ CONTACT_DELIMITER + disease.getFreeText();
+		
+		return dString;
+	}
+	
+	private String processDiseaseList(List<Disease> diseaseLst){
+		List<String> dStrLst = new ArrayList<String>();
+		for(Disease d : diseaseLst){
+			dStrLst.add(processDisease(d));
+		}
+		
+		return String.join(DELIMITER, dStrLst);
 	}
 	
 	/**
@@ -96,8 +119,9 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(df.format(cal.getTime()));
 		
 		// Anatomical Site
-		OntologyTerm aSite = sample.getAnatomicalSite();
-		String aSiteStr = aSite.getOntology() + DELIMITER + aSite.getVersion() + DELIMITER + aSite.getCode() + DELIMITER + aSite.getDescription();
+		OntologyTerm aSite = sample.getAnatomicalSite() ;
+		String aSiteStr = ""; 
+		if(aSite != null) aSiteStr= aSite.getOntology() + CONTACT_DELIMITER + aSite.getVersion() + CONTACT_DELIMITER + aSite.getCode() + CONTACT_DELIMITER + aSite.getDescription();
 		values.add(aSiteStr);
 		
 		//Biobank
@@ -112,7 +136,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		
 		values.add(bb.getDescription());
 		
-		//Sample Collection
+		//Sample Collection 
 		SampleCollection sc = sample.getSamplecollection();
 		
 		values.add(sc.getId());
@@ -130,7 +154,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(processListValues(sc.getMaterialType()));
 		values.add(String.join(DELIMITER, sc.getStorageTemperature()));
 		values.add(processListValues(sc.getCollectionType()));
-		values.add(processListValues(sc.getDiseases()));
+		values.add(processDiseaseList(sc.getDiseases()));
 		
 		values.add(processContactList(sc.getContactInformation()));
 		
