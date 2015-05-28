@@ -4,11 +4,14 @@ import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.stream.Stream;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -16,6 +19,8 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.elasticsearch.common.base.Splitter;
+import org.elasticsearch.common.collect.Lists;
 import org.miabis.exchange.schema.Biobank;
 import org.miabis.exchange.schema.CollectionType;
 import org.miabis.exchange.schema.ContactInformation;
@@ -48,32 +53,48 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		return xmlDate;
 	}
 	
+	private List<String> getValueList(String str){
+		List<String> values = Lists.newArrayList(Splitter.on(CONTACT_DELIMITER).trimResults().split(str));
+		ListIterator<String> i = values.listIterator();
+		
+		while(i.hasNext()){
+			String nxt = i.next();
+			if (nxt.equals("")) i.set(null);
+		}
+		return values;
+	}
+	
 	private ContactInformation decodeContactInformation(String str){
-		String[] values = str.split(CONTACT_DELIMITER);
 		
+		List<String> values = getValueList(str);
+
 		ContactInformation ci = new ContactInformation();
-		ci.setFirstname(values[0]);
-		ci.setLastname(values[1]);
-		ci.setPhone(values[2]);
-		ci.setEmail(values[3]);
-		ci.setAddress(values[4]);
-		ci.setZip(values[5]);
-		ci.setCity(values[6]);
-		ci.setCountry(values[7]);
-		
+		if(values.size() == 9){
+			ci.setId(values.get(0));
+			ci.setFirstname(values.get(1));
+			ci.setLastname(values.get(2));
+			ci.setPhone(values.get(3));
+			ci.setEmail(values.get(4));
+			ci.setAddress(values.get(5));
+			ci.setZip(values.get(6));
+			ci.setCity(values.get(7));
+			ci.setCountry(values.get(8));
+		}
 		return ci;
 	}
 	
 	private Disease decodeDisease(String str){
-		String[] values = str.split(CONTACT_DELIMITER);
+		List<String> values = getValueList(str);
 		
 		Disease d = new Disease();
-		d.setOntology(values[0]);
-		d.setVersion(values[1]);
-		d.setCode(values[2]);
-		d.setDescription(values[3]);
-		d.setFreeText(values[4]);
-		
+		if(values.size() == 6){
+			d.setId(values.get(0));
+			d.setOntology(values.get(1));
+			d.setVersion(values.get(2));
+			d.setCode(values.get(3));
+			d.setDescription(values.get(4));
+			d.setFreeText(values.get(5));
+		}
 		return d;
 	}
 	
@@ -106,13 +127,14 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		}
 		
 		// Anatomical Site
-		String[] values = fieldSet.readString(5).split(CONTACT_DELIMITER);
-		if(values.length == 4){
+		List<String> values = getValueList(fieldSet.readString(5));
+		if(values.size() == 5){
 			OntologyTerm aSite = new OntologyTerm();
-			aSite.setOntology(values[0]);
-			aSite.setVersion(values[1]);
-			aSite.setCode(values[2]);
-			aSite.setDescription(values[3]);
+			aSite.setId(values.get(0));
+			aSite.setOntology(values.get(1));
+			aSite.setVersion(values.get(2));
+			aSite.setCode(values.get(3));
+			aSite.setDescription(values.get(4));
 			
 			sample.setAnatomicalSite(aSite);
 		}
@@ -129,74 +151,106 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		getListStream(fieldSet.readString(10)).forEach(ci -> bCLst.add(decodeContactInformation(ci)));
 		
 		bb.setDescription(fieldSet.readString(11));
+		bb.setCountry(fieldSet.readString(12));
 		sample.setBiobank(bb);
 		
 		//Sample Collection
 		SampleCollection sc = new SampleCollection();
-		sc.setId(fieldSet.readString(12));
-		sc.setAcronym(fieldSet.readString(13));
-		sc.setName(fieldSet.readString(14));
-		sc.setDescription(fieldSet.readString(15));
+		sc.setId(fieldSet.readString(13));
+		sc.setAcronym(fieldSet.readString(14));
+		sc.setName(fieldSet.readString(15));
+		sc.setDescription(fieldSet.readString(16));
 		
 		List<Sex> sexLst = sc.getSex();
-		getListStream(fieldSet.readString(16)).forEach(sex -> sexLst.add(Sex.fromValue(sex)));
+		getListStream(fieldSet.readString(17)).forEach(sex -> sexLst.add(Sex.fromValue(sex)));
 		
-		sc.setAgeLow(fieldSet.readInt(17));
-		sc.setAgeHigh(fieldSet.readInt(18));
-		sc.setAgeUnit(TimeUnit.fromValue(fieldSet.readString(19)));
+		
+		try{
+			sc.setAgeLow(fieldSet.readInt(18));
+		}catch(NumberFormatException e){
+			e.printStackTrace();
+		}
+		
+		try{
+			sc.setAgeHigh(fieldSet.readInt(19));
+		}catch(NumberFormatException e){
+			e.printStackTrace();
+		}
+		
+		try{
+			sc.setAgeUnit(TimeUnit.fromValue(fieldSet.readString(20)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		List<DataCategory> dCat = sc.getDataCategory();
-		getListStream(fieldSet.readString(20)).forEach(cat -> dCat.add(DataCategory.fromValue(cat)));
+		getListStream(fieldSet.readString(21)).forEach(cat -> dCat.add(DataCategory.fromValue(cat)));
 		
 		List<MaterialType> scMtLst = sc.getMaterialType();
-		getListStream(fieldSet.readString(21)).forEach(mt -> scMtLst.add(MaterialType.fromValue(mt)));
+		getListStream(fieldSet.readString(22)).forEach(mt -> scMtLst.add(MaterialType.fromValue(mt)));
 		
 		//Storage Temperature
 		stLst = sc.getStorageTemperature();
-		stLst.addAll(Arrays.asList(fieldSet.readString(22).split(DELIMITER)));
+		stLst.addAll(Arrays.asList(fieldSet.readString(23).split(DELIMITER)));
 		
 		List<CollectionType> ctLst = sc.getCollectionType();
-		getListStream(fieldSet.readString(23)).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));
+		getListStream(fieldSet.readString(24)).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));
 		
 		List<Disease> dLst = sc.getDiseases();
-		getListStream(fieldSet.readString(24)).forEach(d -> dLst.add(decodeDisease(d)));
+		getListStream(fieldSet.readString(25)).forEach(d -> dLst.add(decodeDisease(d)));
 		
 		List<ContactInformation> scCLst = sc.getContactInformation();
-		getListStream(fieldSet.readString(25)).forEach(ci -> scCLst.add(decodeContactInformation(ci)));
+		getListStream(fieldSet.readString(26)).forEach(ci -> scCLst.add(decodeContactInformation(ci)));
 		
 		sample.setSamplecollection(sc);
 		
 		//Study
 		Study study = new Study();
 		
-		study.setId(fieldSet.readString(26));
-		study.getPrincipalInvestigator().addAll(Arrays.asList(fieldSet.readString(27).split(DELIMITER)));
+		study.setId(fieldSet.readString(27));
+		study.setName(fieldSet.readString(28));
+		study.setDescription(fieldSet.readString(29));
+		study.getPrincipalInvestigator().addAll(Arrays.asList(fieldSet.readString(30).split(DELIMITER)));
 		
 		//ContactInfo
 		List<ContactInformation> cLst = study.getContactInformation();
-		getListStream(fieldSet.readString(28)).forEach(ci -> cLst.add(decodeContactInformation(ci)));
+		getListStream(fieldSet.readString(31)).forEach(ci -> cLst.add(decodeContactInformation(ci)));
 		
 		List<CollectionType> sDesign = study.getStudyDesign();
-		getListStream(fieldSet.readString(29)).forEach(sd -> sDesign.add(CollectionType.fromValue(sd)));
+		getListStream(fieldSet.readString(32)).forEach(sd -> sDesign.add(CollectionType.fromValue(sd)));
 		
 		List<Sex> sSexLst = study.getSex();
-		getListStream(fieldSet.readString(30)).forEach(sex -> sSexLst.add(Sex.fromValue(sex)));
+		getListStream(fieldSet.readString(33)).forEach(sex -> sSexLst.add(Sex.fromValue(sex)));
 		
-		study.setAgeLow(fieldSet.readInt(31));
-		study.setAgeHigh(fieldSet.readInt(32));
-		study.setAgeUnit(TimeUnit.fromValue(fieldSet.readString(33)));
+		study.setAgeLow(fieldSet.readInt(34));
+		study.setAgeHigh(fieldSet.readInt(35));
+		
+		try{
+			study.setAgeUnit(TimeUnit.fromValue(fieldSet.readString(36)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		List<DataCategory> sDCat = study.getDataCategory();
-		getListStream(fieldSet.readString(34)).forEach(cat -> sDCat.add(DataCategory.fromValue(cat)));
+		getListStream(fieldSet.readString(37)).forEach(cat -> sDCat.add(DataCategory.fromValue(cat)));
 		
 		List<MaterialType> sMtLst = study.getMaterialType();
-		getListStream(fieldSet.readString(35)).forEach(mt -> sMtLst.add(MaterialType.fromValue(mt)));
+		getListStream(fieldSet.readString(38)).forEach(mt -> sMtLst.add(MaterialType.fromValue(mt)));
 		
-		study.setTotalNumberOfParticipants(new BigInteger(fieldSet.readString(36)));
-		study.setTotalNumberOfDonors(new BigInteger(fieldSet.readString(37)));
+		try{
+			study.setTotalNumberOfParticipants(new BigInteger(fieldSet.readString(39)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		try{
+			study.setTotalNumberOfDonors(new BigInteger(fieldSet.readString(40)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		List<InclusionCriteria> iLst = study.getInclusionCriteria();
-		getListStream(fieldSet.readString(38)).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
+		getListStream(fieldSet.readString(41)).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
 		
 		sample.setStudy(study);
 		
