@@ -52,9 +52,6 @@ public class SampleTabTransformTest {
 		String sampleStr = aggregator.aggregate(sample);
 		Sample sample1 = mapper.mapLine(sampleStr, 0);
 		
-		System.out.println(sample.getBiobank());
-		System.out.println(sample1.getBiobank());
-		
 		assertEquals(sample.getBiobank(), sample1.getBiobank());
 		assertEquals(sample.getStudy(), sample1.getStudy());
 		assertEquals(sample.getSamplecollection(), sample1.getSamplecollection());
