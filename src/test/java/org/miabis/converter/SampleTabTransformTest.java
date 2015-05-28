@@ -3,7 +3,6 @@ package org.miabis.converter;
 import static org.junit.Assert.*;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import javax.xml.datatype.DatatypeFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.miabis.converter.transform.SampleFieldExtractor;
 import org.miabis.exchange.schema.Biobank;
 import org.miabis.exchange.schema.CollectionType;
 import org.miabis.exchange.schema.ContactInformation;
@@ -38,6 +36,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class SampleTabTransformTest {
 	
 	private static Sample sample;
+	private static Biobank bb;
+	private static SampleCollection sc;
+	private static Study study;
 	
 	@Autowired
 	private DelimitedLineAggregator<Sample> aggregator;
@@ -49,17 +50,58 @@ public class SampleTabTransformTest {
 	public void testMapperAndExtractor() throws Exception{
 		
 		String sampleStr = aggregator.aggregate(sample);
-		
 		Sample sample1 = mapper.mapLine(sampleStr, 0);
 		
+		System.out.println(sample.getBiobank());
+		System.out.println(sample1.getBiobank());
 		
-		System.out.println(sample.toString());
-		System.out.println(sample1.toString());
+		assertEquals(sample.getBiobank(), sample1.getBiobank());
+		assertEquals(sample.getStudy(), sample1.getStudy());
+		assertEquals(sample.getSamplecollection(), sample1.getSamplecollection());
 		
-		//System.out.println(sampleStr);
-		//String e = extractor.extract(sample);
+		assertEquals(sample.getAnatomicalSite(), sample.getAnatomicalSite());
+		assertEquals(sample.getMaterialType(), sample.getMaterialType());
+		assertEquals(sample.getStorageTemperature(), sample.getStorageTemperature());
+		assertEquals(sample.getId(), sample.getId());
+	}
+	
+	@Test
+	public void testEmptySample() throws Exception{
+		String sampleStr = aggregator.aggregate(new Sample());
+		mapper.mapLine(sampleStr, 0);
+	}
+	
+	@Test
+	public void testIncompleteContactInfo() throws Exception{
+		ContactInformation ci = new ContactInformation();
+		ci.setCity("Macondo");
 		
+		bb.getContactInformation().clear();
+		bb.getContactInformation().add(ci);
 		
+		Sample sample = new Sample();
+		sample.setBiobank(bb);
+		
+		String sampleStr = aggregator.aggregate(sample);
+		Sample mappedSample = mapper.mapLine(sampleStr, 0);
+		
+		assertEquals(sample.getBiobank(), mappedSample.getBiobank());
+	}
+	
+	@Test
+	public void testIncompleteDisease() throws Exception{
+		Disease d = new Disease();
+		d.setCode("123");
+		
+		sc.getDiseases().add(d);
+		
+		Sample sample = new Sample();
+		sample.setSamplecollection(sc);
+		
+		String sampleStr = aggregator.aggregate(sample);
+		Sample mappedSample = mapper.mapLine(sampleStr, 0);
+		
+		assertEquals(sample.getSamplecollection(), mappedSample.getSamplecollection());
 	}
 	
 	//Create a sample
@@ -74,6 +116,7 @@ public class SampleTabTransformTest {
 		sample.getStorageTemperature().add("Storage tmp");
 		
 		OntologyTerm as = new OntologyTerm();
+		as.setId("id");
 		as.setOntology("ontology");
 		as.setVersion("version");
 		as.setCode("code");
@@ -81,14 +124,16 @@ public class SampleTabTransformTest {
 		
 		sample.setAnatomicalSite(as);
 		
-		Biobank bb = new Biobank();
+		bb = new Biobank();
 		bb.setId("my bb");
 		bb.setAcronym("acronym");
 		bb.setName("name");
 		bb.setUrl("https://github.com/MIABIS");
 		bb.setDescription("A biobank description");
+		bb.setCountry("ES");
 		
 		ContactInformation ci = new ContactInformation();
+		ci.setId("ci id");
 		ci.setFirstname("pepin");
 		ci.setLastname("peres");
 		ci.setPhone("+490176551234");
@@ -102,7 +147,7 @@ public class SampleTabTransformTest {
 		sample.setBiobank(bb);
 		
 		//Sample Collection
-		SampleCollection sc = new SampleCollection();
+		sc = new SampleCollection();
 		sc.setId("my SC");
 		sc.setAcronym("sc acronym");
 		sc.setName("sc name");
@@ -135,6 +180,7 @@ public class SampleTabTransformTest {
 		ctLst.add(CollectionType.LONGITUDINAL);
 		
 		Disease d = new Disease();
+		d.setId("disease id");
 		d.setOntology("ontology");
 		d.setVersion("version");
 		d.setCode("code");
@@ -147,7 +193,7 @@ public class SampleTabTransformTest {
 		sample.setSamplecollection(sc);
 		
 		//Study
-		Study study = new Study();
+		study = new Study();
 		study.setId("my study");
 		study.setName("study name");
 		study.setDescription("just a study");
