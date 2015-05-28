@@ -115,13 +115,6 @@
 			<version>1.2.14</version>
 		</dependency>
 		
-		<!-- MIABIS 
-		<dependency>
-    		<groupId>eu.bbmri-eric.miabis</groupId>
-    		<artifactId>MIABIS</artifactId>
-    		<version>1.0.0-SNAPSHOT</version>
-		</dependency>-->
-		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>
