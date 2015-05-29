@@ -238,13 +238,13 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		getListStream(fieldSet.readString(38)).forEach(mt -> sMtLst.add(MaterialType.fromValue(mt)));
 		
 		try{
-			study.setTotalNumberOfParticipants(new BigInteger(fieldSet.readString(39)));
+			study.setTotalNumberOfParticipants(fieldSet.readInt(39));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		try{
-			study.setTotalNumberOfDonors(new BigInteger(fieldSet.readString(40)));
+			study.setTotalNumberOfDonors(fieldSet.readInt(40));
 		}catch(Exception e){
 			e.printStackTrace();
 		}

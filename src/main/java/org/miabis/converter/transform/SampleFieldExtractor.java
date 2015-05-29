@@ -187,8 +187,9 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(processListValues(study.getDataCategory()));
 		values.add(processListValues(study.getMaterialType()));
 		
-		values.add((study.getTotalNumberOfParticipants() != null) ? study.getTotalNumberOfParticipants().toString() : "" );
-		values.add((study.getTotalNumberOfDonors() != null) ? study.getTotalNumberOfDonors().toString() : "");
+		
+		values.add(study.getTotalNumberOfParticipants() + "");
+		values.add(study.getTotalNumberOfDonors() + "");
 		values.add(processListValues(study.getInclusionCriteria()));
 		
 		ListIterator<String> it = values.listIterator();

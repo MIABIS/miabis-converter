@@ -217,8 +217,8 @@ public class SampleTabTransformTest {
 		List<MaterialType> sMtLst = study.getMaterialType();
 		sMtLst.add(MaterialType.CELL_LINES);
 		
-		study.setTotalNumberOfParticipants(new BigInteger("3213213454654654231321"));
-		study.setTotalNumberOfDonors(new BigInteger("3213213454654654231321"));
+		study.setTotalNumberOfParticipants(2147483647);
+		study.setTotalNumberOfDonors(2147483647);
 		
 		List<InclusionCriteria> iLst = study.getInclusionCriteria();
 		iLst.add(InclusionCriteria.AGE_GROUP);
