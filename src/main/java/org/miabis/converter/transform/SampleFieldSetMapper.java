@@ -1,15 +1,12 @@
 package org.miabis.converter.transform;
 
-import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Stream;
@@ -33,6 +30,7 @@ import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Sex;
 import org.miabis.exchange.schema.Study;
+import org.miabis.exchange.schema.Temperature;
 import org.miabis.exchange.schema.TimeUnit;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
@@ -44,7 +42,7 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 	private final String CONTACT_DELIMITER = ",";
 	private final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 	
-	private XMLGregorianCalendar toXMLGregorianCalendar(String str) throws ParseException, DatatypeConfigurationException{
+	private XMLGregorianCalendar toXMLGregorianCalendar(String str) throws Exception{
 		Date date = DATE_FORMAT.parse(str);
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(date);
@@ -114,15 +112,14 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		getListStream(fieldSet.readString(2)).forEach(mt -> mtLst.add(MaterialType.fromValue(mt)));
 		
 		//Storage Temperature
-		List<String> stLst = sample.getStorageTemperature();
-		stLst.addAll(Arrays.asList(fieldSet.readString(3).split(DELIMITER)));
+		List<Temperature> stLst = sample.getStorageTemperature();
+		getListStream(fieldSet.readString(3)).forEach(t -> stLst.add(Temperature.fromValue(t)));
+		
 		
 		//Sampled Time
 		try {
 			sample.setSampledTime(toXMLGregorianCalendar(fieldSet.readString(4)));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} catch (DatatypeConfigurationException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -190,8 +187,8 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		getListStream(fieldSet.readString(22)).forEach(mt -> scMtLst.add(MaterialType.fromValue(mt)));
 		
 		//Storage Temperature
-		stLst = sc.getStorageTemperature();
-		stLst.addAll(Arrays.asList(fieldSet.readString(23).split(DELIMITER)));
+		List<Temperature> stLst1 = sc.getStorageTemperature();
+		getListStream(fieldSet.readString(23)).forEach(t -> stLst1.add(Temperature.fromValue(t)));
 		
 		List<CollectionType> ctLst = sc.getCollectionType();
 		getListStream(fieldSet.readString(24)).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));

@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.stream.Stream;
 
 import org.elasticsearch.common.base.Joiner;
 import org.miabis.exchange.schema.Biobank;
@@ -113,8 +112,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(processListValues(sample.getMaterialType()));
 		
 		//Storage Temperature
-		List<String> sTemp = sample.getStorageTemperature();
-		values.add(String.join(DELIMITER, sTemp));
+		values.add(processListValues(sample.getStorageTemperature()));
 		
 		//Sampled Time
 		String sTime = "";
@@ -161,7 +159,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 			
 		values.add(processListValues(sc.getDataCategory()));
 		values.add(processListValues(sc.getMaterialType()));
-		values.add(String.join(DELIMITER, sc.getStorageTemperature()));
+		values.add(processListValues(sc.getStorageTemperature()));
 		values.add(processListValues(sc.getCollectionType()));
 		values.add(processDiseaseList(sc.getDiseases()));
 			

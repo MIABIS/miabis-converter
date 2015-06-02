@@ -23,6 +23,7 @@ import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Sex;
 import org.miabis.exchange.schema.Study;
+import org.miabis.exchange.schema.Temperature;
 import org.miabis.exchange.schema.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -67,7 +68,7 @@ public class ElasticSearchTest {
 		sample.setParentSampleId("parentSample");
 		sample.setSampledTime(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
 		sample.getMaterialType().add(MaterialType.C_DNA_M_RNA);
-		sample.getStorageTemperature().add("Storage tmp");
+		sample.getStorageTemperature().add(Temperature.CENTIGRADES_2_TO_10);
 		
 		OntologyTerm as = new OntologyTerm();
 		as.setId("id");
@@ -125,9 +126,9 @@ public class ElasticSearchTest {
 		scMtLst.add(MaterialType.MICRO_RNA);
 		
 		//Storage Temperature
-		List<String> stLst = sc.getStorageTemperature();
-		stLst.add("temp1");
-		stLst.add("temp2");
+		List<Temperature> stLst = sc.getStorageTemperature();
+		stLst.add(Temperature.CENTIGRADES_MIN_18_TO_MIN_35);
+		stLst.add(Temperature.CENTIGRADES_2_TO_10);
 		
 		List<CollectionType> ctLst = sc.getCollectionType();
 		ctLst.add(CollectionType.BIRTH_COHORT);

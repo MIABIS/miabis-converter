@@ -2,7 +2,6 @@ package org.miabis.converter;
 
 import static org.junit.Assert.*;
 
-import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -24,6 +23,7 @@ import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Sex;
 import org.miabis.exchange.schema.Study;
+import org.miabis.exchange.schema.Temperature;
 import org.miabis.exchange.schema.TimeUnit;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
@@ -54,8 +54,8 @@ public class SampleTabTransformTest {
 		
 		assertEquals(sample.getBiobank(), sample1.getBiobank());
 		assertEquals(sample.getStudy(), sample1.getStudy());
-		assertEquals(sample.getSamplecollection(), sample1.getSamplecollection());
 		
+		assertEquals(sample.getSamplecollection(), sample1.getSamplecollection());
 		assertEquals(sample.getAnatomicalSite(), sample.getAnatomicalSite());
 		assertEquals(sample.getMaterialType(), sample.getMaterialType());
 		assertEquals(sample.getStorageTemperature(), sample.getStorageTemperature());
@@ -67,6 +67,7 @@ public class SampleTabTransformTest {
 		String sampleStr = aggregator.aggregate(new Sample());
 		mapper.mapLine(sampleStr, 0);
 	}
+	
 	
 	@Test
 	public void testIncompleteContactInfo() throws Exception{
@@ -110,7 +111,7 @@ public class SampleTabTransformTest {
 		sample.setParentSampleId("parentSample");
 		sample.setSampledTime(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
 		sample.getMaterialType().add(MaterialType.C_DNA_M_RNA);
-		sample.getStorageTemperature().add("Storage tmp");
+		sample.getStorageTemperature().add(Temperature.CENTIGRADES_2_TO_10);
 		
 		OntologyTerm as = new OntologyTerm();
 		as.setId("id");
@@ -168,9 +169,9 @@ public class SampleTabTransformTest {
 		scMtLst.add(MaterialType.MICRO_RNA);
 		
 		//Storage Temperature
-		List<String> stLst = sc.getStorageTemperature();
-		stLst.add("temp1");
-		stLst.add("temp2");
+		List<Temperature> stLst = sc.getStorageTemperature();
+		stLst.add(Temperature.CENTIGRADES_MIN_18_TO_MIN_35);
+		stLst.add(Temperature.LN);
 		
 		List<CollectionType> ctLst = sc.getCollectionType();
 		ctLst.add(CollectionType.BIRTH_COHORT);
