@@ -10,6 +10,7 @@ import org.miabis.exchange.schema.OntologyTerm;
 import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Study;
+import org.miabis.exchange.schema.Temperature;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -22,7 +23,7 @@ public class IndexableSample{
     
     @Field(type = FieldType.Nested)
     protected List<MaterialType> materialType;
-    protected List<String> storageTemperature;
+    protected List<Temperature> storageTemperature;
     protected XMLGregorianCalendar sampledTime;
     protected OntologyTerm anatomicalSite;
     
@@ -77,11 +78,11 @@ public class IndexableSample{
 		this.materialType = materialType;
 	}
 	
-    public List<String> getStorageTemperature() {
+    public List<Temperature> getStorageTemperature() {
 		return storageTemperature;
 	}
 	
-    public void setStorageTemperature(List<String> storageTemperature) {
+    public void setStorageTemperature(List<Temperature> storageTemperature) {
 		this.storageTemperature = storageTemperature;
 	}
 	
