@@ -1,6 +1,8 @@
 package org.miabis.converter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -66,7 +68,7 @@ public class ElasticSearchTest {
 		sample = new Sample();
 		sample.setId("mySample");
 		sample.setParentSampleId("parentSample");
-		sample.setSampledTime(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
+		sample.setSampledTime(LocalDateTime.now());
 		sample.getMaterialType().add(MaterialType.C_DNA_M_RNA);
 		sample.getStorageTemperature().add(Temperature.CENTIGRADES_2_TO_10);
 		

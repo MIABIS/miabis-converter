@@ -3,6 +3,8 @@ package org.miabis.converter;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -40,7 +42,7 @@ public class SampleProcessorTest {
 		
 		s.setId("mySample");
 		s.setParentSampleId("parentSample");
-		s.setSampledTime(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
+		s.setSampledTime(LocalDateTime.now());
 		s.getMaterialType().add(MaterialType.C_DNA_M_RNA);
 		s.getStorageTemperature().add(Temperature.CENTIGRADES_2_TO_10);
 		

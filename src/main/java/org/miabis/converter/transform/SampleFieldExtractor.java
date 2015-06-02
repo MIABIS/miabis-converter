@@ -17,6 +17,7 @@ import org.miabis.exchange.schema.OntologyTerm;
 import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Study;
+import org.miabis.exchange.util.XsdDateTimeConverter;
 import org.springframework.batch.item.file.transform.FieldExtractor;
 
 public class SampleFieldExtractor implements FieldExtractor<Sample> {
@@ -117,10 +118,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		//Sampled Time
 		String sTime = "";
 		if(sample.getSampledTime() != null){
-			Calendar cal = sample.getSampledTime().toGregorianCalendar();
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-			df.setTimeZone(cal.getTimeZone());
-			sTime = df.format(cal.getTime());
+			sTime = XsdDateTimeConverter.marshalDate(sample.getSampledTime());
 		}
 		values.add(sTime);
 		

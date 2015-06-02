@@ -2,12 +2,15 @@ package org.miabis.converter;
 
 import static org.junit.Assert.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.joda.time.LocalDate;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -109,7 +112,7 @@ public class SampleTabTransformTest {
 		sample = new Sample();
 		sample.setId("mySample");
 		sample.setParentSampleId("parentSample");
-		sample.setSampledTime(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
+		sample.setSampledTime(LocalDateTime.now());
 		sample.getMaterialType().add(MaterialType.C_DNA_M_RNA);
 		sample.getStorageTemperature().add(Temperature.CENTIGRADES_2_TO_10);
 		

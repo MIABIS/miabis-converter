@@ -32,6 +32,7 @@ import org.miabis.exchange.schema.Sex;
 import org.miabis.exchange.schema.Study;
 import org.miabis.exchange.schema.Temperature;
 import org.miabis.exchange.schema.TimeUnit;
+import org.miabis.exchange.util.XsdDateTimeConverter;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
@@ -40,16 +41,6 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 
 	private final String DELIMITER = "\\|";
 	private final String CONTACT_DELIMITER = ",";
-	private final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-	
-	private XMLGregorianCalendar toXMLGregorianCalendar(String str) throws Exception{
-		Date date = DATE_FORMAT.parse(str);
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTime(date);
-		
-		XMLGregorianCalendar xmlDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), date.getHours(), date.getMinutes(), date.getSeconds(), DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
-		return xmlDate;
-	}
 	
 	private List<String> getValueList(String str){
 		List<String> values = Lists.newArrayList(Splitter.on(CONTACT_DELIMITER).trimResults().split(str));
@@ -118,7 +109,7 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		
 		//Sampled Time
 		try {
-			sample.setSampledTime(toXMLGregorianCalendar(fieldSet.readString(4)));
+			sample.setSampledTime(XsdDateTimeConverter.unmarshal(fieldSet.readString(4)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

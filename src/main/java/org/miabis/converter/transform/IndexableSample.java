@@ -1,5 +1,8 @@
 package org.miabis.converter.transform;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -24,7 +27,7 @@ public class IndexableSample{
     @Field(type = FieldType.Nested)
     protected List<MaterialType> materialType;
     protected List<Temperature> storageTemperature;
-    protected XMLGregorianCalendar sampledTime;
+    protected LocalDateTime sampledTime;
     protected OntologyTerm anatomicalSite;
     
     @Field(type = FieldType.Nested)
@@ -86,11 +89,11 @@ public class IndexableSample{
 		this.storageTemperature = storageTemperature;
 	}
 	
-    public XMLGregorianCalendar getSampledTime() {
+    public LocalDateTime getSampledTime() {
 		return sampledTime;
 	}
 	
-    public void setSampledTime(XMLGregorianCalendar sampledTime) {
+    public void setSampledTime(LocalDateTime sampledTime) {
 		this.sampledTime = sampledTime;
 	}
 	
