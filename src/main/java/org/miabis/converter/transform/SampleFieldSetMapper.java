@@ -1,20 +1,10 @@
 package org.miabis.converter.transform;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Stream;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.elasticsearch.common.base.Splitter;
 import org.elasticsearch.common.collect.Lists;
@@ -210,8 +200,17 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		List<Sex> sSexLst = study.getSex();
 		getListStream(fieldSet.readString(33)).forEach(sex -> sSexLst.add(Sex.fromValue(sex)));
 		
-		study.setAgeLow(fieldSet.readInt(34));
-		study.setAgeHigh(fieldSet.readInt(35));
+		try{
+			study.setAgeLow(fieldSet.readInt(34));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		try{
+			study.setAgeHigh(fieldSet.readInt(35));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		try{
 			study.setAgeUnit(TimeUnit.fromValue(fieldSet.readString(36)));
