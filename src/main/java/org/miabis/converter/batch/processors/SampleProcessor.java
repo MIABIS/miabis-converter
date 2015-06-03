@@ -30,7 +30,7 @@ public class SampleProcessor implements ItemProcessor<Sample, IndexableSample>, 
 		
 		//DefaultHandler will discard all the events, and the marshal() operation 
 		//will throw a JAXBException if validation against the schema fails.
-		IndexableSample is = null;
+		/*IndexableSample is = null;
 		try{
 			marshaller.marshal(sample, new DefaultHandler());
 			is = new IndexableSample(sample);
@@ -38,7 +38,11 @@ public class SampleProcessor implements ItemProcessor<Sample, IndexableSample>, 
 			logger.error("couldn't parse sample with id "+ sample.getId(), e);
 		} 
 		
-		return is;
+		System.out.println(is);
+		
+		return is;*/
+		
+		return new IndexableSample(sample);
 	}
 
 	@Override
