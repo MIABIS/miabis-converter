@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/data/elasticsearch http://www.springframework.org/schema/data/elasticsearch/spring-elasticsearch-1.0.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
 
-	<description>Job that reads XML files and transforms them into tabulated files</description>
+	<description>Job that reads TAB files and index them in elastic search</description>
  	
 	<batch:job id="job1">
 		<batch:step id="step1"  >			
@@ -53,9 +53,4 @@
 		    </bean>
 		</property>
 	</bean>
-	
-	<bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-		<property name="contextPath" value="org.miabis.exchange.schema" />
-		<property name="schema" value="classpath:sample-exchange-schema.xsd"/>
-    </bean>
 </beans>
