@@ -1,11 +1,7 @@
 package org.miabis.converter.transform;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.miabis.exchange.schema.Biobank;
 import org.miabis.exchange.schema.MaterialType;
@@ -18,6 +14,10 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+/**
+ * Annotated version of the sample class so it can be indexed by elastic search.
+ * @author jvillaveces
+ */
 @Document(indexName = "sample")
 public class IndexableSample{
 	

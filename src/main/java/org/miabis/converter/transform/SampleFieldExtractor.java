@@ -1,11 +1,8 @@
 package org.miabis.converter.transform;
 
 import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -42,7 +39,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 	/**
 	 * Calls processContact and concatenates the resulting String with DELIMITER
 	 * @param contactLst
-	 * @return
+	 * @return a String representing a list of contacts
 	 */
 	private String processContactList(List<ContactInformation> contactLst){
 		
@@ -55,9 +52,9 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 	}
 	
 	/**
-	 * Returns a string that represents a disease. The string is delimited by CONTACT_DELIMITER
+	 * Returns a String that represents a disease. The String is delimited by CONTACT_DELIMITER
 	 * @param disease
-	 * @return
+	 * @return	a String representing a disease
 	 */
 	private String processDisease(Disease disease){
 		
@@ -67,6 +64,11 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		return Joiner.on(CONTACT_DELIMITER).useForNull("").join(diseaseLst);
 	}
 	
+	/**
+	 * Returns a String that represents a list of diseases by calling <i>processDisease</i>
+	 * @param diseaseLst a list of diseases
+	 * @return a String representing a list of diseases
+	 */
 	private String processDiseaseList(List<Disease> diseaseLst){
 		List<String> dStrLst = new ArrayList<String>();
 		for(Disease d : diseaseLst){
@@ -79,7 +81,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 	/**
 	 * Extracts the value of each object in the list and returns a String of values concatenated by DELIMITER. 
 	 * @param lst
-	 * @return
+	 * @return a String representing a list of objects
 	 */
 	private String processListValues(List<?> lst){
 		
@@ -100,6 +102,11 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		return String.join(DELIMITER, values);
 	}
 	
+	/**
+	 * Turns a sample into an array of strings
+	 * @param sample
+	 * @return an array of strings representing a Sample
+	 */
 	@Override
 	public Object[] extract(Sample sample) {
 		
@@ -198,5 +205,4 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		}
 		return values.toArray();
 	}
-
 }

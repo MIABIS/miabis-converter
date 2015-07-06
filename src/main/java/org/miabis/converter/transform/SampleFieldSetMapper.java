@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Stream;
 
-
 import org.elasticsearch.common.base.Splitter;
 import org.elasticsearch.common.collect.Lists;
 import org.miabis.exchange.schema.Biobank;
@@ -32,7 +31,12 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 	private final String DELIMITER = "\\|";
 	private final String CONTACT_DELIMITER = ",";
 	
-	private List<String> getValueList(String str){
+	/**
+	 * Splits a String around matches of <i>,</i>
+	 * @param str a String
+	 * @return a list of Strings
+	 */
+	private List<String> getTokens(String str){
 		List<String> values = Lists.newArrayList(Splitter.on(CONTACT_DELIMITER).trimResults().split(str));
 		ListIterator<String> i = values.listIterator();
 		
@@ -43,9 +47,14 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		return values;
 	}
 	
+	/**
+	 * Decodes a formatted string and returns a <i>ContactInformation</i> object
+	 * @param str
+	 * @return contact information object
+	 */
 	private ContactInformation decodeContactInformation(String str){
 		
-		List<String> values = getValueList(str);
+		List<String> values = getTokens(str);
 
 		ContactInformation ci = new ContactInformation();
 		if(values.size() == 9){
@@ -62,8 +71,13 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		return ci;
 	}
 	
+	/**
+	 * Decodes a formatted string and returns a <i>Disease</i> object
+	 * @param str
+	 * @return disease object
+	 */
 	private Disease decodeDisease(String str){
-		List<String> values = getValueList(str);
+		List<String> values = getTokens(str);
 		
 		Disease d = new Disease();
 		if(values.size() == 6){
@@ -77,10 +91,20 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		return d;
 	}
 	
+	/**
+	 * Splits a String around matches of <i>|</i> and filters null values
+	 * @param str a String
+	 * @return a string Stream
+	 */
 	private Stream<String> getListStream(String str){
 		return Arrays.asList(str.split(DELIMITER)).stream().filter(s -> s == null || s.length() > 0);
 	}
 	
+	/**
+	 * Turns a fieldSet into a sample
+	 * @param fieldSet
+	 * @return a sample
+	 */
 	@Override
 	public Sample mapFieldSet(FieldSet fieldSet) throws BindException {
 		
@@ -105,7 +129,7 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		}
 		
 		// Anatomical Site
-		List<String> values = getValueList(fieldSet.readString(5));
+		List<String> values = getTokens(fieldSet.readString(5));
 		if(values.size() == 5){
 			OntologyTerm aSite = new OntologyTerm();
 			aSite.setId(values.get(0));
