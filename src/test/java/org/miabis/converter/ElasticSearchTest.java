@@ -66,8 +66,8 @@ public class ElasticSearchTest {
 		sample.setId("mySample");
 		sample.setParentSampleId("parentSample");
 		sample.setSampledTime(LocalDateTime.now());
-		sample.getMaterialType().add(MaterialType.C_DNA_M_RNA);
-		sample.getStorageTemperature().add(Temperature.CENTIGRADES_2_TO_10);
+		sample.setMaterialType(MaterialType.C_DNA_M_RNA);
+		sample.setStorageTemperature(Temperature.CENTIGRADES_2_TO_10);
 		
 		OntologyTerm as = new OntologyTerm();
 		as.setId("id");
