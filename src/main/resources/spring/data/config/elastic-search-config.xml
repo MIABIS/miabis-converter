@@ -10,7 +10,4 @@
     <bean name="elasticsearchTemplate" class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">
         <constructor-arg name="client" ref="client"/>
     </bean>
-	
-	<elasticsearch:repositories base-package="org.springframework.data.elasticsearch.repositories" />
-
 </beans>
