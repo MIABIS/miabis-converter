@@ -25,8 +25,8 @@ public class IndexableSample{
     protected String parentSampleId;
     
     @Field(type = FieldType.Nested)
-    protected List<MaterialType> materialType;
-    protected List<Temperature> storageTemperature;
+    protected MaterialType materialType;
+    protected Temperature storageTemperature;
     protected LocalDateTime sampledTime;
     protected OntologyTerm anatomicalSite;
     
@@ -73,19 +73,19 @@ public class IndexableSample{
 		this.parentSampleId = parentSampleId;
 	}
 	
-    public List<MaterialType> getMaterialType() {
+    public MaterialType getMaterialType() {
 		return materialType;
 	}
 	
-    public void setMaterialType(List<MaterialType> materialType) {
+    public void setMaterialType(MaterialType materialType) {
 		this.materialType = materialType;
 	}
 	
-    public List<Temperature> getStorageTemperature() {
+    public Temperature getStorageTemperature() {
 		return storageTemperature;
 	}
 	
-    public void setStorageTemperature(List<Temperature> storageTemperature) {
+    public void setStorageTemperature(Temperature storageTemperature) {
 		this.storageTemperature = storageTemperature;
 	}
 	

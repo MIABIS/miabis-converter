@@ -10,10 +10,12 @@ import org.elasticsearch.common.base.Joiner;
 import org.miabis.exchange.schema.Biobank;
 import org.miabis.exchange.schema.ContactInformation;
 import org.miabis.exchange.schema.Disease;
+import org.miabis.exchange.schema.MaterialType;
 import org.miabis.exchange.schema.OntologyTerm;
 import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Study;
+import org.miabis.exchange.schema.Temperature;
 import org.miabis.exchange.util.XsdDateTimeConverter;
 import org.springframework.batch.item.file.transform.FieldExtractor;
 
@@ -117,10 +119,12 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(sample.getParentSampleId());
 		
 		//Material Type
-		values.add(processListValues(sample.getMaterialType()));
+		String mt = (sample.getMaterialType() != null) ? sample.getMaterialType().value() : "";
+		values.add(mt);
 		
 		//Storage Temperature
-		values.add(processListValues(sample.getStorageTemperature()));
+		String t = (sample.getStorageTemperature() != null) ? sample.getStorageTemperature().value() : "";
+		values.add(t);
 		
 		//Sampled Time
 		String sTime = "";

@@ -113,13 +113,18 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		sample.setParentSampleId(fieldSet.readString(1));
 		
 		//Material Type
-		List<MaterialType> mtLst = sample.getMaterialType();
-		getListStream(fieldSet.readString(2)).forEach(mt -> mtLst.add(MaterialType.fromValue(mt)));
+		try{
+			sample.setMaterialType(MaterialType.fromValue(fieldSet.readString(2)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		//Storage Temperature
-		List<Temperature> stLst = sample.getStorageTemperature();
-		getListStream(fieldSet.readString(3)).forEach(t -> stLst.add(Temperature.fromValue(t)));
-		
+		try{
+			sample.setStorageTemperature(Temperature.fromValue(fieldSet.readString(3)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		//Sampled Time
 		try {
