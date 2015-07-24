@@ -1,7 +1,6 @@
 package org.miabis.converter.transform;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.miabis.exchange.schema.Biobank;
 import org.miabis.exchange.schema.MaterialType;

@@ -1,7 +1,6 @@
 package org.miabis.converter;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.time.LocalDateTime;
 
