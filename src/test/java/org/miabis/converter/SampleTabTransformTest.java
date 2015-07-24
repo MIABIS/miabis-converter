@@ -205,9 +205,6 @@ public class SampleTabTransformTest {
 		List<DataCategory> sDCat = study.getDataCategory();
 		sDCat.add(DataCategory.GENEALOGICAL_RECORDS);
 		
-		List<MaterialType> sMtLst = study.getMaterialType();
-		sMtLst.add(MaterialType.CELL_LINES);
-		
 		study.setTotalNumberOfParticipants(2147483647);
 		study.setTotalNumberOfDonors(2147483647);
 		

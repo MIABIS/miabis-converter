@@ -188,7 +188,6 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add((study.getAgeUnit() != null) ? study.getAgeUnit().value() : "");
 		
 		values.add(processListValues(study.getDataCategory()));
-		values.add(processListValues(study.getMaterialType()));
 		
 		
 		values.add(study.getTotalNumberOfParticipants() + "");

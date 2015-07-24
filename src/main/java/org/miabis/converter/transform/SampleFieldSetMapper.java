@@ -250,23 +250,20 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		List<DataCategory> sDCat = study.getDataCategory();
 		getListStream(fieldSet.readString(35)).forEach(cat -> sDCat.add(DataCategory.fromValue(cat)));
 		
-		List<MaterialType> sMtLst = study.getMaterialType();
-		getListStream(fieldSet.readString(36)).forEach(mt -> sMtLst.add(MaterialType.fromValue(mt)));
-		
 		try{
-			study.setTotalNumberOfParticipants(fieldSet.readInt(37));
+			study.setTotalNumberOfParticipants(fieldSet.readInt(36));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		try{
-			study.setTotalNumberOfDonors(fieldSet.readInt(38));
+			study.setTotalNumberOfDonors(fieldSet.readInt(37));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		List<InclusionCriteria> iLst = study.getInclusionCriteria();
-		getListStream(fieldSet.readString(39)).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
+		getListStream(fieldSet.readString(38)).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
 		
 		sample.setStudy(study);
 		
