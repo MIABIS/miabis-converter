@@ -167,8 +167,6 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add((sc.getAgeUnit() != null) ? sc.getAgeUnit().value() : "");
 			
 		values.add(processListValues(sc.getDataCategory()));
-		values.add(processListValues(sc.getMaterialType()));
-		values.add(processListValues(sc.getStorageTemperature()));
 		values.add(processListValues(sc.getCollectionType()));
 		values.add(processDiseaseList(sc.getDiseases()));
 			

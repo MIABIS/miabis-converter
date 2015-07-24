@@ -120,15 +120,6 @@ public class ElasticSearchTest {
 		dCat.add(DataCategory.BIOLOGICAL_SAMPLES);
 		dCat.add(DataCategory.IMAGING_DATA);
 		
-		List<MaterialType> scMtLst = sc.getMaterialType();
-		scMtLst.add(MaterialType.C_DNA_M_RNA);
-		scMtLst.add(MaterialType.MICRO_RNA);
-		
-		//Storage Temperature
-		List<Temperature> stLst = sc.getStorageTemperature();
-		stLst.add(Temperature.CENTIGRADES_MIN_18_TO_MIN_35);
-		stLst.add(Temperature.CENTIGRADES_2_TO_10);
-		
 		List<CollectionType> ctLst = sc.getCollectionType();
 		ctLst.add(CollectionType.BIRTH_COHORT);
 		ctLst.add(CollectionType.LONGITUDINAL);

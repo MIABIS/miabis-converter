@@ -47,7 +47,7 @@ public class ConverterCli {
 				.argName("elastic search cluster")
 				.longOpt("cluster")
 				.hasArg()
-				.desc("with -i: elastic search cluster group")
+				.desc("with -i: elastic search cluster group. It defaults to "+clustersNodes)
 				.build();
 		
 		Option helpOpt = Option.builder("h")
@@ -95,7 +95,7 @@ public class ConverterCli {
 	}
 	
 	private static void printHelp(){
-		new HelpFormatter().printHelp("converter.jar", options);
+		new HelpFormatter().printHelp("miabis-converter", options);
 	}
 
 }

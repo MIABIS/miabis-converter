@@ -193,80 +193,80 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		List<DataCategory> dCat = sc.getDataCategory();
 		getListStream(fieldSet.readString(21)).forEach(cat -> dCat.add(DataCategory.fromValue(cat)));
 		
-		List<MaterialType> scMtLst = sc.getMaterialType();
-		getListStream(fieldSet.readString(22)).forEach(mt -> scMtLst.add(MaterialType.fromValue(mt)));
+		//List<MaterialType> scMtLst = sc.getMaterialType();
+		//getListStream(fieldSet.readString(22)).forEach(mt -> scMtLst.add(MaterialType.fromValue(mt)));
 		
 		//Storage Temperature
-		List<Temperature> stLst1 = sc.getStorageTemperature();
-		getListStream(fieldSet.readString(23)).forEach(t -> stLst1.add(Temperature.fromValue(t)));
+		//List<Temperature> stLst1 = sc.getStorageTemperature();
+		//getListStream(fieldSet.readString(23)).forEach(t -> stLst1.add(Temperature.fromValue(t)));
 		
 		List<CollectionType> ctLst = sc.getCollectionType();
-		getListStream(fieldSet.readString(24)).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));
+		getListStream(fieldSet.readString(22)).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));
 		
 		List<Disease> dLst = sc.getDiseases();
-		getListStream(fieldSet.readString(25)).forEach(d -> dLst.add(decodeDisease(d)));
+		getListStream(fieldSet.readString(23)).forEach(d -> dLst.add(decodeDisease(d)));
 		
 		List<ContactInformation> scCLst = sc.getContactInformation();
-		getListStream(fieldSet.readString(26)).forEach(ci -> scCLst.add(decodeContactInformation(ci)));
+		getListStream(fieldSet.readString(24)).forEach(ci -> scCLst.add(decodeContactInformation(ci)));
 		
 		sample.setSamplecollection(sc);
 		
 		//Study
 		Study study = new Study();
 		
-		study.setId(fieldSet.readString(27));
-		study.setName(fieldSet.readString(28));
-		study.setDescription(fieldSet.readString(29));
-		study.getPrincipalInvestigator().addAll(Arrays.asList(fieldSet.readString(30).split(DELIMITER)));
+		study.setId(fieldSet.readString(25));
+		study.setName(fieldSet.readString(26));
+		study.setDescription(fieldSet.readString(27));
+		study.getPrincipalInvestigator().addAll(Arrays.asList(fieldSet.readString(28).split(DELIMITER)));
 		
 		//ContactInfo
 		List<ContactInformation> cLst = study.getContactInformation();
-		getListStream(fieldSet.readString(31)).forEach(ci -> cLst.add(decodeContactInformation(ci)));
+		getListStream(fieldSet.readString(29)).forEach(ci -> cLst.add(decodeContactInformation(ci)));
 		
 		List<CollectionType> sDesign = study.getStudyDesign();
-		getListStream(fieldSet.readString(32)).forEach(sd -> sDesign.add(CollectionType.fromValue(sd)));
+		getListStream(fieldSet.readString(30)).forEach(sd -> sDesign.add(CollectionType.fromValue(sd)));
 		
 		List<Sex> sSexLst = study.getSex();
-		getListStream(fieldSet.readString(33)).forEach(sex -> sSexLst.add(Sex.fromValue(sex)));
+		getListStream(fieldSet.readString(31)).forEach(sex -> sSexLst.add(Sex.fromValue(sex)));
 		
 		try{
-			study.setAgeLow(fieldSet.readInt(34));
+			study.setAgeLow(fieldSet.readInt(32));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		try{
-			study.setAgeHigh(fieldSet.readInt(35));
+			study.setAgeHigh(fieldSet.readInt(33));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		try{
-			study.setAgeUnit(TimeUnit.fromValue(fieldSet.readString(36)));
+			study.setAgeUnit(TimeUnit.fromValue(fieldSet.readString(34)));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		List<DataCategory> sDCat = study.getDataCategory();
-		getListStream(fieldSet.readString(37)).forEach(cat -> sDCat.add(DataCategory.fromValue(cat)));
+		getListStream(fieldSet.readString(35)).forEach(cat -> sDCat.add(DataCategory.fromValue(cat)));
 		
 		List<MaterialType> sMtLst = study.getMaterialType();
-		getListStream(fieldSet.readString(38)).forEach(mt -> sMtLst.add(MaterialType.fromValue(mt)));
+		getListStream(fieldSet.readString(36)).forEach(mt -> sMtLst.add(MaterialType.fromValue(mt)));
 		
 		try{
-			study.setTotalNumberOfParticipants(fieldSet.readInt(39));
+			study.setTotalNumberOfParticipants(fieldSet.readInt(37));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		try{
-			study.setTotalNumberOfDonors(fieldSet.readInt(40));
+			study.setTotalNumberOfDonors(fieldSet.readInt(38));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		List<InclusionCriteria> iLst = study.getInclusionCriteria();
-		getListStream(fieldSet.readString(41)).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
+		getListStream(fieldSet.readString(39)).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
 		
 		sample.setStudy(study);
 		
