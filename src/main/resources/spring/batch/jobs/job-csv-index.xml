@@ -38,13 +38,19 @@
 		<!-- write to this tab file -->
 		<property name="resource" value="#{jobParameters['tab.input']}" />
 		<property name="strict" value="true"/>
+		<property name="comments">
+			<list>
+            	<value>#</value>
+        	</list>
+		</property> 
 		<property name="lineMapper">
 			<bean id="lineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
 				<property name="lineTokenizer">
 					<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
 						<property name="delimiter">
-							<util:constant static-field="org.springframework.batch.item.file.transform.DelimitedLineTokenizer.DELIMITER_TAB" />
+							<util:constant static-field="org.miabis.converter.batch.util.DELIMITER_TAB" />
 						</property>
+						<property name="names" value="#{jobParameters['columns']}"/>
 					</bean>
 				</property>
 				<property name="fieldSetMapper">
