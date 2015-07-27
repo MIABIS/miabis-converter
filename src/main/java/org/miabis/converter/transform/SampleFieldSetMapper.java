@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import org.elasticsearch.common.base.Splitter;
 import org.elasticsearch.common.collect.Lists;
+import org.miabis.converter.batch.util.Util;
 import org.miabis.exchange.schema.Biobank;
 import org.miabis.exchange.schema.CollectionType;
 import org.miabis.exchange.schema.ContactInformation;
@@ -27,9 +28,6 @@ import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
 
 public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
-
-	private final String DELIMITER = "\\|";
-	private final String CONTACT_DELIMITER = ",";
 	
 	/**
 	 * Splits a String around matches of <i>,</i>
@@ -37,7 +35,7 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 	 * @return a list of Strings
 	 */
 	private List<String> getTokens(String str){
-		List<String> values = Lists.newArrayList(Splitter.on(CONTACT_DELIMITER).trimResults().split(str));
+		List<String> values = Lists.newArrayList(Splitter.on(Util.DELIMITER_BACKSLASH).trimResults().split(str));
 		ListIterator<String> i = values.listIterator();
 		
 		while(i.hasNext()){
@@ -97,7 +95,7 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 	 * @return a string Stream
 	 */
 	private Stream<String> getListStream(String str){
-		return Arrays.asList(str.split(DELIMITER)).stream().filter(s -> s == null || s.length() > 0);
+		return Arrays.asList(str.split(Util.DELIMITER_VERTICAL_BAR)).stream().filter(s -> s == null || s.length() > 0);
 	}
 	
 	/**
