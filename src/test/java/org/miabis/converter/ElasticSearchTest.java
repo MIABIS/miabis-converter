@@ -97,7 +97,7 @@ public class ElasticSearchTest {
 		ci.setCity("Hamburg");
 		ci.setCountry("DE");
 		
-		bb.getContactInformation().add(ci);
+		bb.setContactInformation(ci);
 		sample.setBiobank(bb);
 		
 		//Sample Collection
@@ -133,7 +133,7 @@ public class ElasticSearchTest {
 		d.setFreeText("free text");
 		
 		sc.getDiseases().add(d);
-		sc.getContactInformation().add(ci);
+		sc.setContactInformation(ci);
 				
 		sample.setSamplecollection(sc);
 		
@@ -143,8 +143,8 @@ public class ElasticSearchTest {
 		study.setName("study name");
 		study.setDescription("just a study");
 		
-		study.getPrincipalInvestigator().add("very important PI");
-		study.getContactInformation().add(ci);
+		study.setPrincipalInvestigator("very important PI");
+		study.setContactInformation(ci);
 		
 		List<CollectionType> sDesign = study.getStudyDesign();
 		sDesign.add(CollectionType.BIRTH_COHORT);

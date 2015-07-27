@@ -70,7 +70,7 @@ public class SampleProcessorTest {
 		ci.setCity("Hamburg");
 		ci.setCountry("DE");
 		
-		bb.getContactInformation().add(ci);
+		bb.setContactInformation(ci);
 		s.setBiobank(bb);
 		
 		IndexableSample is = processor.process(s);

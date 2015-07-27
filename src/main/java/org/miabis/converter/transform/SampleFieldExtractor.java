@@ -29,7 +29,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 	 */
 	private String processContact(ContactInformation contact){
 		
-		List<String> contactLst = Arrays.asList(contact.getId(), contact.getFirstname(), contact.getLastname(), 
+		List<String> contactLst =  (contact == null) ? new ArrayList<String>() : Arrays.asList(contact.getId(), contact.getFirstname(), contact.getLastname(), 
 		                                  contact.getPhone(), contact.getEmail(), contact.getAddress(), 
 		                                  contact.getZip(), contact.getCity() , contact.getCountry());
 		
@@ -145,7 +145,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(bb.getName());
 		values.add(bb.getUrl());
 			
-		values.add(processContactList(bb.getContactInformation()));
+		values.add(processContact(bb.getContactInformation()));
 			
 		values.add(bb.getDescription());
 		values.add(bb.getCountry());
@@ -168,7 +168,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(processListValues(sc.getCollectionType()));
 		values.add(processDiseaseList(sc.getDiseases()));
 			
-		values.add(processContactList(sc.getContactInformation()));
+		values.add(processContact(sc.getContactInformation()));
 
 		//Study
 		Study study = (sample.getStudy() != null) ? sample.getStudy() : new Study();
@@ -178,7 +178,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(study.getDescription());
 		values.add(String.join(DELIMITER, study.getPrincipalInvestigator()));
 		
-		values.add(processContactList(study.getContactInformation()));
+		values.add(processContact(study.getContactInformation()));
 		
 		values.add(processListValues(study.getStudyDesign()));
 		values.add(processListValues(study.getSex()));

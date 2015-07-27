@@ -154,8 +154,7 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		bb.setUrl(fieldSet.readString(9));
 		
 		//ContactInfo
-		List<ContactInformation> bCLst = bb.getContactInformation();
-		getListStream(fieldSet.readString(10)).forEach(ci -> bCLst.add(decodeContactInformation(ci)));
+		bb.setContactInformation(decodeContactInformation(fieldSet.readString(10)));
 		
 		bb.setDescription(fieldSet.readString(11));
 		bb.setCountry(fieldSet.readString(12));
@@ -206,8 +205,7 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		List<Disease> dLst = sc.getDiseases();
 		getListStream(fieldSet.readString(23)).forEach(d -> dLst.add(decodeDisease(d)));
 		
-		List<ContactInformation> scCLst = sc.getContactInformation();
-		getListStream(fieldSet.readString(24)).forEach(ci -> scCLst.add(decodeContactInformation(ci)));
+		sc.setContactInformation(decodeContactInformation(fieldSet.readString(24)));
 		
 		sample.setSamplecollection(sc);
 		
@@ -217,11 +215,11 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		study.setId(fieldSet.readString(25));
 		study.setName(fieldSet.readString(26));
 		study.setDescription(fieldSet.readString(27));
-		study.getPrincipalInvestigator().addAll(Arrays.asList(fieldSet.readString(28).split(DELIMITER)));
+		
+		study.setPrincipalInvestigator(fieldSet.readString(28));
 		
 		//ContactInfo
-		List<ContactInformation> cLst = study.getContactInformation();
-		getListStream(fieldSet.readString(29)).forEach(ci -> cLst.add(decodeContactInformation(ci)));
+		study.setContactInformation(decodeContactInformation(fieldSet.readString(29)));
 		
 		List<CollectionType> sDesign = study.getStudyDesign();
 		getListStream(fieldSet.readString(30)).forEach(sd -> sDesign.add(CollectionType.fromValue(sd)));

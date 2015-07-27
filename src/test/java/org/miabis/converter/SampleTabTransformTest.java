@@ -73,8 +73,7 @@ public class SampleTabTransformTest {
 		ContactInformation ci = new ContactInformation();
 		ci.setCity("Macondo");
 		
-		bb.getContactInformation().clear();
-		bb.getContactInformation().add(ci);
+		bb.setContactInformation(ci);
 		
 		Sample sample = new Sample();
 		sample.setBiobank(bb);
@@ -140,7 +139,7 @@ public class SampleTabTransformTest {
 		ci.setCity("Hamburg");
 		ci.setCountry("DE");
 		
-		bb.getContactInformation().add(ci);
+		bb.setContactInformation(ci);
 		sample.setBiobank(bb);
 		
 		//Sample Collection
@@ -176,7 +175,7 @@ public class SampleTabTransformTest {
 		d.setFreeText("free text");
 		
 		sc.getDiseases().add(d);
-		sc.getContactInformation().add(ci);
+		sc.setContactInformation(ci);
 				
 		sample.setSamplecollection(sc);
 		
@@ -186,8 +185,8 @@ public class SampleTabTransformTest {
 		study.setName("study name");
 		study.setDescription("just a study");
 		
-		study.getPrincipalInvestigator().add("very important PI");
-		study.getContactInformation().add(ci);
+		study.setPrincipalInvestigator("very important PI");
+		study.setContactInformation(ci);
 		
 		List<CollectionType> sDesign = study.getStudyDesign();
 		sDesign.add(CollectionType.BIRTH_COHORT);
