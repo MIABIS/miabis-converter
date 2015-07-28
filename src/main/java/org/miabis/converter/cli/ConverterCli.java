@@ -7,6 +7,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.miabis.converter.batch.util.Util;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -88,6 +89,7 @@ public class ConverterCli {
 		JobParametersBuilder pb = new JobParametersBuilder();
 		pb.addString("tab.input", "file:"+inputFile);
 		pb.addString("clusters.nodes", clustersNodes);
+		pb.addString("columns", Util.COLUMNS);
 		
 		jobLauncher.run(job, pb.toJobParameters());
 	}
