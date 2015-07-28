@@ -48,7 +48,7 @@
 				<property name="lineTokenizer">
 					<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
 						<property name="delimiter">
-							<util:constant static-field="org.miabis.converter.batch.util.DELIMITER_TAB" />
+							<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
 						</property>
 						<property name="names" value="#{jobParameters['columns']}"/>
 					</bean>
