@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.miabis.converter.batch.util.Util;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -31,6 +32,7 @@ public class JobCSVToIndexTest {
 		JobParametersBuilder pb = new JobParametersBuilder();
 		pb.addString("tab.input", "classpath:samples.tab");
 		pb.addString("clusters.nodes", "10.133.0.29:9300");
+		pb.addString("columns", Util.COLUMNS);
 		
 		jobLauncher.run(job, pb.toJobParameters());
 	}
