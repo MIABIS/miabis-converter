@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.elasticsearch.common.base.Joiner;
+import org.miabis.converter.batch.util.Util;
 import org.miabis.exchange.schema.Biobank;
 import org.miabis.exchange.schema.ContactInformation;
 import org.miabis.exchange.schema.Disease;
@@ -19,8 +20,8 @@ import org.springframework.batch.item.file.transform.FieldExtractor;
 
 public class SampleFieldExtractor implements FieldExtractor<Sample> {
 	
-	private final String DELIMITER = "|";
-	private final String CONTACT_DELIMITER = ",";
+	private final String DELIMITER = Util.DELIMITER_VERTICAL_BAR;
+	private final String CONTACT_DELIMITER = Util.DELIMITER_BACKSLASH;
 	
 	/**
 	 * Returns a string that represents a contact. The string is delimited by CONTACT_DELIMITER
