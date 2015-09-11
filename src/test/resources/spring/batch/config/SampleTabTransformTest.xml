@@ -25,6 +25,9 @@
 				<property name="delimiter">
 					<util:constant static-field="org.springframework.batch.item.file.transform.DelimitedLineTokenizer.DELIMITER_TAB" />
 				</property>
+				<property name="names">
+					<util:constant static-field="org.miabis.converter.batch.util.Util.COLUMNS" />
+				</property>
 			</bean>
 		</property>
 		<property name="fieldSetMapper">
