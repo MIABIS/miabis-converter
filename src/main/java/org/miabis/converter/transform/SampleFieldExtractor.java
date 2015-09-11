@@ -128,7 +128,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		//Sampled Time
 		String sTime = "";
 		if(sample.getSampledTime() != null){
-			sTime = XsdDateTimeConverter.marshalDate(sample.getSampledTime());
+			sTime = XsdDateTimeConverter.marshalDateTime(sample.getSampledTime());
 		}
 		values.add(sTime);
 		
@@ -145,7 +145,10 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(bb.getAcronym());
 		values.add(bb.getName());
 		values.add(bb.getUrl());
-			
+		
+		String jp = (bb.getJuristicPerson() != null) ? bb.getJuristicPerson() : "";
+		values.add(jp);
+		
 		values.add(processContact(bb.getContactInformation()));
 			
 		values.add(bb.getDescription());
