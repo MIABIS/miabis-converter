@@ -31,13 +31,17 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 	
 	private String[] columns = Util.COLUMNS.split(",");
 	
+	//Escape | since string.split expects regex argument. An unescaped | is parsed as a regex meaning "empty string or empty string"
+	private final String DELIMITER = "\\"+Util.DELIMITER_VERTICAL_BAR;
+	private final String CONTACT_DELIMITER = Util.DELIMITER_BACKSLASH;
+	
 	/**
-	 * Splits a String around matches of <i>,</i>
+	 * Splits a String around matches of <i>\</i>
 	 * @param str a String
 	 * @return a list of Strings
 	 */
 	private List<String> getTokens(String str){
-		List<String> values = Lists.newArrayList(Splitter.on(Util.DELIMITER_BACKSLASH).trimResults().split(str));
+		List<String> values = Lists.newArrayList(Splitter.on(CONTACT_DELIMITER).trimResults().split(str));
 		ListIterator<String> i = values.listIterator();
 		
 		while(i.hasNext()){
@@ -97,7 +101,7 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 	 * @return a string Stream
 	 */
 	private Stream<String> getListStream(String str){
-		return Arrays.asList(str.split(Util.DELIMITER_VERTICAL_BAR)).stream().filter(s -> s == null || s.length() > 0);
+		return Arrays.asList(str.split(DELIMITER)).stream().filter(s -> s == null || s.length() > 0);
 	}
 	
 	/**
@@ -170,6 +174,8 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		sc.setDescription(fieldSet.readString(columns[17]));
 		
 		List<Sex> sexLst = sc.getSex();
+		System.out.println(fieldSet.readString(columns[18]));
+		System.out.println(String.join(",", fieldSet.readString(columns[18]).split(DELIMITER)));
 		getListStream(fieldSet.readString(columns[18])).forEach(sex -> sexLst.add(Sex.fromValue(sex)));
 		
 		try{
