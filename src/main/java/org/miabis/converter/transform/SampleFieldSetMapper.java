@@ -174,8 +174,6 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		sc.setDescription(fieldSet.readString(columns[17]));
 		
 		List<Sex> sexLst = sc.getSex();
-		System.out.println(fieldSet.readString(columns[18]));
-		System.out.println(String.join(",", fieldSet.readString(columns[18]).split(DELIMITER)));
 		getListStream(fieldSet.readString(columns[18])).forEach(sex -> sexLst.add(Sex.fromValue(sex)));
 		
 		try{
