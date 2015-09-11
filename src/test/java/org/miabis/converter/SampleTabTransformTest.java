@@ -49,7 +49,11 @@ public class SampleTabTransformTest {
 	public void testMapperAndExtractor() throws Exception{
 		
 		String sampleStr = aggregator.aggregate(sample);
+		
 		Sample sample1 = mapper.mapLine(sampleStr, 0);
+		
+		System.out.println(sample);
+		System.out.println(sample1);
 		
 		assertEquals(sample.getBiobank(), sample1.getBiobank());
 		assertEquals(sample.getStudy(), sample1.getStudy());
@@ -60,6 +64,7 @@ public class SampleTabTransformTest {
 		assertEquals(sample.getStorageTemperature(), sample.getStorageTemperature());
 		assertEquals(sample.getId(), sample.getId());
 	}
+	
 	
 	@Test
 	public void testEmptySample() throws Exception{
@@ -127,6 +132,7 @@ public class SampleTabTransformTest {
 		bb.setUrl("https://github.com/MIABIS");
 		bb.setDescription("A biobank description");
 		bb.setCountry("ES");
+		bb.setJuristicPerson("");
 		
 		ContactInformation ci = new ContactInformation();
 		ci.setId("ci id");
