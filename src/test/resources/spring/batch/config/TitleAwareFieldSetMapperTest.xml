@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
+
+	<description>XML bean definitions to test TitleAwareFlatFileReader</description>
+	
+	<context:property-placeholder ignore-resource-not-found="false" ignore-unresolvable="false" location="/spring/properties/database.properties" />
+
+	<bean id="titleAwareFlatFileReader" class="org.miabis.converter.batch.reader.TitleAwareFlatFileItemReader">
+		<property name="hasTitles" value="true"/>
+		<property name="strict" value="true"/>
+		<property name="delimiter">
+			<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
+		</property>
+		<property name="comments">
+			<list>
+            	<value>#</value>
+        	</list>
+		</property> 
+		<property name="lineMapper">
+			<bean id="lineMapper" class="org.miabis.converter.transform.LineTokenizerAwareLineMapper">
+				<property name="lineTokenizer">
+					<bean name="lineTokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="delimiter">
+							<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
+						</property>
+						<property name="names">
+							<util:constant static-field="org.miabis.converter.batch.util.Util.COLUMNS" />
+						</property>
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean class="org.miabis.converter.transform.TitleAwareFieldSetMapper">
+						<constructor-arg value="example.mapping.properties"/>
+						<property name="dbNames" value="${db.contact.information.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	
+	<bean id="swappedFlatFileReader" class="org.miabis.converter.batch.reader.TitleAwareFlatFileItemReader">
+		<property name="hasTitles" value="true"/>
+		<property name="strict" value="true"/>
+		<property name="delimiter">
+			<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
+		</property>
+		<property name="comments">
+			<list>
+            	<value>#</value>
+        	</list>
+		</property> 
+		<property name="lineMapper">
+			<bean id="lineMapper" class="org.miabis.converter.transform.LineTokenizerAwareLineMapper">
+				<property name="lineTokenizer">
+					<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="delimiter">
+							<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
+						</property>
+						<property name="names">
+							<util:constant static-field="org.miabis.converter.batch.util.Util.COLUMNS" />
+						</property>
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean class="org.miabis.converter.transform.TitleAwareFieldSetMapper">
+						<constructor-arg value="example.mapping.properties"/>
+						<property name="dbNames" value="${db.contact.information.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+</beans>
