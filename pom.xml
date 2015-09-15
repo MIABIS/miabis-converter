@@ -127,6 +127,20 @@
 		    <version>1.2.0.RELEASE</version>
 		</dependency>
 		
+		<!-- Spring jdbc, for database -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.framework.version}</version>
+		</dependency>
+		
+		<!-- Derby DB and JDBC driver  -->
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.11.1.1</version>
+		</dependency>
+		
 		<dependency>
 		    <groupId>org.jvnet.jaxb2_commons</groupId>
 		    <artifactId>jaxb2-basics-runtime</artifactId>
