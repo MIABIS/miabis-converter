@@ -14,9 +14,11 @@
 
 
 	<!-- create job-meta tables automatically -->
-  	<jdbc:initialize-database data-source="dataSource">
+  	<jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS">
 		<jdbc:script location="org/springframework/batch/core/schema-drop-derby.sql" />
+		<jdbc:script location="spring/db/db-drop.sql" />
 		<jdbc:script location="org/springframework/batch/core/schema-derby.sql" />
+		<jdbc:script location="spring/db/db-schema.sql" />
   	</jdbc:initialize-database>
 
 	<!-- stored job-meta in memory --> 
