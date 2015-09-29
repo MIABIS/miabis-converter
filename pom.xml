@@ -4,20 +4,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.samples.batch</groupId>
-	<artifactId>spring-batch-simple</artifactId>
-	<version>2.0.0.CI-SNAPSHOT</version>
+	<artifactId>miabis-converter</artifactId>
+	<version>1.0.0.SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>Command Line Spring Batch Module</name>
-	<url>http://www.springframework.org/spring-batch/archetypes/simple-cli-archetype</url>
-	<description>
-		<![CDATA[
-      This project is a minimal command line batch sample from Spring Batch.  
-    ]]>
-	</description>
+	<name>Miabis Converter</name>
 	<properties>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
-		<spring.framework.version>4.1.6.RELEASE</spring.framework.version>
-		<spring.batch.version>3.0.3.RELEASE</spring.batch.version>
+		<spring.framework.version>4.2.1.RELEASE</spring.framework.version>
+		<spring.batch.version>3.0.5.RELEASE</spring.batch.version>
+		<jdk.version>1.8</jdk.version>
 	</properties>
 	<profiles>
 		<profile>
@@ -29,7 +24,7 @@
 		<profile>
 			<id>tiger</id>
 			<activation>
-				<jdk>1.5</jdk>
+				<jdk>1.8</jdk>
 			</activation>
 			<dependencies>
 				<dependency>
@@ -43,9 +38,14 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.miabis.exchange.schema</groupId>
+			<artifactId>MIABIS-sample</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.7</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -94,11 +94,7 @@
 			<artifactId>commons-io</artifactId>
 			<version>1.4</version>
 		</dependency>
-		<dependency>
-			<groupId>hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.7</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
@@ -124,7 +120,7 @@
 		<dependency>
 		    <groupId>org.springframework.data</groupId>
 		    <artifactId>spring-data-elasticsearch</artifactId>
-		    <version>1.2.0.RELEASE</version>
+		    <version>1.3.0.RELEASE</version>
 		</dependency>
 		
 		<!-- Spring jdbc, for database -->
@@ -175,57 +171,73 @@
 	</dependencies>
 
 	<build>
-		 
 		<plugins>
+		
+			<!-- download source code in Eclipse, best practice -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.10</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>false</downloadJavadocs>
+				</configuration>
+			</plugin>
+			
+			<!-- Set a JDK compiler level -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
-			 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.1</version>
-				<configuration>
-					<mainClass>org.springframework.batch.core.launch.support.CommandLineJobRunner</mainClass>
-					<arguments>
-						<!-- job configuration file -->
-						<argument>classpath:/launch-context.xml</argument>
-						<!-- job name -->
-						<argument>job1</argument>
-					</arguments>
-				</configuration>
-			</plugin>
-		 
+			
+			<!-- Make this jar executable -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
-					<archive>
-						<index>true</index>
+					<!-- DO NOT include log4j.properties file in your Jar -->
+				  	<excludes>
+						<exclude>**/log4j.properties</exclude>
+				  	</excludes>
+				  	<archive>
 						<manifest>
-							<mainClass>org.springframework.batch.core.launch.support.CommandLineJobRunner</mainClass>
 							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
+							<!-- Jar file entry point -->
+							<mainClass>org.miabis.converter.cli.ConverterCli</mainClass>
+							<classpathPrefix>dependency-jars/</classpathPrefix>
 						</manifest>
-					</archive>
+				  	</archive>
 				</configuration>
+			</plugin>
+			
+			<!-- Copy project dependency -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<executions>
+				  <execution>
+					<id>copy-dependencies</id>
+					<phase>package</phase>
+					<goals>
+						<goal>copy-dependencies</goal>
+					</goals>
+					<configuration>
+					  <!-- exclude junit, we need runtime dependency only -->
+					  <includeScope>runtime</includeScope>
+					  <outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
+					</configuration>
+				  </execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>Codehaus</id>
-			<url>http://repository.codehaus.org/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
  
+	<url>https://github.com/MIABIS/miabis-converter</url>
+	<description>MIABIS converter is a tool that aims to facilitate the migration of different formats to MIABIS sample exchange compliant XML. It is sample centered and its based on the miabis-sample-exchange-format.</description>
 </project>
