@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:batch="http://www.springframework.org/schema/batch"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:elasticsearch="http://www.springframework.org/schema/data/elasticsearch"
+	xmlns:batch="http://www.springframework.org/schema/batch"
 	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
 		http://www.springframework.org/schema/data/elasticsearch http://www.springframework.org/schema/data/elasticsearch/spring-elasticsearch-1.0.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
 
 	<description>Job that reads TAB files and index them in elastic search</description>
  	
 	<batch:job id="job1">
 		<batch:step id="step1"  >			
 			<batch:tasklet transaction-manager="transactionManager" start-limit="100" >
-				<batch:chunk reader="tabFileItemReader" processor="sampleProcessor" writer="indexWriter" commit-interval="100" />
+				<batch:chunk reader="tabFileItemReader"  writer="indexWriter" commit-interval="100" />
 			</batch:tasklet>
 		</batch:step>
 	</batch:job>
 	
-	<bean id="sampleProcessor" class="org.miabis.converter.batch.processors.SampleProcessor">
-		<property name="schema" value="classpath:sample-exchange-schema.xsd"/>
-	</bean>
+	<!-- <bean id="sampleProcessor" class="org.miabis.converter.batch.processors.SampleProcessor">
+		<property name="schema" value="classpath*:**sample-exchange-schema.xsd"/>
+	</bean> -->
 	
 	<bean id="indexWriter" class="org.miabis.converter.batch.writers.ElasticSearchSampleWriter" scope="step">
 		<constructor-arg>
