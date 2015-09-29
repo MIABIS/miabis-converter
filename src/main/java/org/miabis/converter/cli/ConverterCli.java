@@ -23,7 +23,7 @@ public class ConverterCli {
 	
 	private static Options options; 
 	private static String format = "tab";
-	private static String clustersNodes = "10.133.0.29:9300";
+	private static String clustersNodes = "localhost:9300";
 
 	public static void main(String[] args) throws ParseException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 	
@@ -80,7 +80,7 @@ public class ConverterCli {
 		
 		String inputFile = cmd.getOptionValue("i");
 		
-		AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"/spring/batch/config/config.xml", "/spring/batch/jobs/job-csv-index.xml"});
+		AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath*:**/config.xml", "classpath*:**/job-csv-index.xml"});
 		ctx.registerShutdownHook();
 		
 		Job job = (Job) ctx.getBean("job1");
