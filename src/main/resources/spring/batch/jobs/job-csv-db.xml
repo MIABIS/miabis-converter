@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
+
+	<description>XML bean definitions to test TitleAwareFlatFileReader</description>
+	
+	<context:property-placeholder location="/spring/properties/database.properties" />
+ 	
+ 	<batch:job id="job1">
+		<batch:step id="step1"  >			
+			<batch:tasklet transaction-manager="transactionManager" start-limit="100" >
+				<batch:chunk reader="contactInfoReader" writer="contactInfoWriter" commit-interval="100" />
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+	
+	
+ 	<!-- Parent beans definition -->
+ 	
+ 	<!-- Parent Field Set Mapper -->
+ 	<bean id="parentFieldSetMapper" class="org.miabis.converter.transform.TitleAwareFieldSetMapper">
+		<constructor-arg value="example.mapping.properties"/>
+	</bean>
+ 	
+ 	<!-- Parent line mapper -->
+ 	<bean id="parentLineMapper" class="org.miabis.converter.transform.LineTokenizerAwareLineMapper">
+		<property name="lineTokenizer">
+			<bean name="lineTokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+				<property name="delimiter">
+					<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
+				</property>
+				<property name="names">
+					<util:constant static-field="org.miabis.converter.batch.util.Util.COLUMNS" />
+				</property>
+			</bean>
+		</property>
+		<property name="fieldSetMapper" ref="parentFieldSetMapper"/>
+	</bean>
+ 	
+ 	<!-- Parent reader -->
+ 	<bean id="parentReader" class="org.miabis.converter.batch.reader.TitleAwareFlatFileItemReader">
+ 		<property name="hasTitles" value="true"/>
+		<property name="strict" value="true"/>
+		<property name="delimiter">
+			<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
+		</property>
+		<property name="comments">
+			<list>
+            	<value>#</value>
+        	</list>
+		</property>
+		<property name="lineMapper" ref="parentLineMapper"/> 
+ 	</bean>
+ 	
+ 	<!-- Parent writer -->
+ 	<bean id="parentWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource" />
+        <property name="itemPreparedStatementSetter">
+        	<bean class="org.springframework.batch.item.database.support.ColumnMapItemPreparedStatementSetter"/>
+        </property>
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into CONTACT_INFORMATION(id,	firstName, lastName, phone, email,	address, zip, city, country) 
+                    values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
+ 	
+ 	<!-- Readers -->
+ 	<bean id="contactInfoReader"  parent="parentReader" scope="step">
+		<property name="resource" value="#{jobParameters['contactInfo']}"/>
+		<property name="lineMapper">
+			<bean parent="parentLineMapper">
+				<property name="fieldSetMapper">
+					<bean parent="parentFieldSetMapper">
+						<property name="dbNames" value="${db.contact.information.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	<bean id="biobankReader"  parent="parentReader" scope="step">
+		<property name="resource" value="#{jobParameters['biobank']}"/>
+		<property name="lineMapper">
+			<bean parent="parentLineMapper">
+				<property name="fieldSetMapper">
+					<bean parent="parentFieldSetMapper">
+						<property name="dbNames" value="${db.biobank.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	<bean id="contactInfoWriter" parent="parentWriter" scope="step">
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into CONTACT_INFORMATION(id,	firstName, lastName, phone, email,	address, zip, city, country) 
+                    values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
+	
+</beans>
