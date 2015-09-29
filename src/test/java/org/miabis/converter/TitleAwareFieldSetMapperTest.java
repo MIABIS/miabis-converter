@@ -1,5 +1,8 @@
 package org.miabis.converter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Before;
@@ -18,13 +21,13 @@ public class TitleAwareFieldSetMapperTest {
 
 	@Autowired
 	@Qualifier("titleAwareFlatFileReader")
-	private TitleAwareFlatFileItemReader<String[]> awareReader;
+	private TitleAwareFlatFileItemReader<Map<String,String>> awareReader;
 	
 	@Autowired
 	@Qualifier("swappedFlatFileReader")
-	private TitleAwareFlatFileItemReader<String[]> swappedReader;
+	private TitleAwareFlatFileItemReader<Map<String,String>> swappedReader;
 	
-	private String[] expectedLine = new String[]{"1", "Bilbo", "Baggins", "", "bilbo@middleearth.com", "Bag End 01" , "", "Hobbiton", "Middle Earth"}; 
+	private Map<String, String> expectedMap;
 	
 	private static final String DIRECTORY = "src/test/resources/data/input/";
 	
@@ -35,14 +38,15 @@ public class TitleAwareFieldSetMapperTest {
 		swappedReader.setResource(new FileSystemResource(DIRECTORY + "contactInfoSwapped.txt"));
 	}
 	
+	
 	@Test
 	public void testTitleAwareFieldSetMapper() throws Exception{
 		
 		awareReader.open(new ExecutionContext());
 		
-		String[] line = awareReader.read();
+		Map<String, String> line = awareReader.read();
 		
-		Assert.assertArrayEquals(expectedLine, line);
+		Assert.assertEquals(expectedMap, line);
 		
 		awareReader.close();
 	}
@@ -52,11 +56,24 @@ public class TitleAwareFieldSetMapperTest {
 		
 		swappedReader.open(new ExecutionContext());
 		
-		String[] line = swappedReader.read();
+		Map<String, String> line = swappedReader.read();
 		
-		Assert.assertArrayEquals(expectedLine, line);
+		Assert.assertEquals(expectedMap, line);
 		
 		swappedReader.close();
 	}
 
+	@Before
+	public void populateMap(){
+		expectedMap = new HashMap<String,String>();
+		expectedMap.put("id", "1");
+		expectedMap.put("firstName", "Bilbo");
+		expectedMap.put("lastName", "Baggins");
+		expectedMap.put("phone", "");
+		expectedMap.put("email", "bilbo@middleearth.com");
+		expectedMap.put("address", "Bag End 01");
+		expectedMap.put("zip", "");
+		expectedMap.put("city", "Hobbiton");
+		expectedMap.put("country", "Middle Earth");
+	}
 }
