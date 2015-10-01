@@ -66,14 +66,14 @@ public class TitleAwareFieldSetMapperTest {
 	@Before
 	public void populateMap(){
 		expectedMap = new HashMap<String,String>();
-		expectedMap.put("id", "1");
-		expectedMap.put("firstName", "Bilbo");
-		expectedMap.put("lastName", "Baggins");
-		expectedMap.put("phone", "");
-		expectedMap.put("email", "bilbo@middleearth.com");
-		expectedMap.put("address", "Bag End 01");
-		expectedMap.put("zip", "");
-		expectedMap.put("city", "Hobbiton");
-		expectedMap.put("country", "Middle Earth");
+		expectedMap.put("contactInformation_id", "1");
+		expectedMap.put("contactInformation_firstName", "Bilbo");
+		expectedMap.put("contactInformation_lastName", "Baggins");
+		expectedMap.put("contactInformation_phone", "");
+		expectedMap.put("contactInformation_email", "bilbo@middleearth.com");
+		expectedMap.put("contactInformation_address", "Bag End 01");
+		expectedMap.put("contactInformation_zip", "");
+		expectedMap.put("contactInformation_city", "Hobbiton");
+		expectedMap.put("contactInformation_country", "Middle Earth");
 	}
 }
