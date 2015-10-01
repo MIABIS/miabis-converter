@@ -1,0 +1,2 @@
+ID	ACRONYM	NAME	URL	JURISTIC PERSON	COUNTRY	CONTACT INFORMATION	DESCRIPTION
+2038	KI Biobank	KI Biobank	http://ki.se/kibiobank	Karolinska Institutet	SE	1	KI Biobank is a core facility at Karolinska Institutet is to support researchers who run research studies with sample collections, both within and outside Karolinska Institutet.
