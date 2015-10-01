@@ -1,0 +1,4 @@
+ID	PARENT_SAMPLE_ID	MATERIAL_TYPE	STORAGE_TEMPERATURE	SAMPLED_TIME	ANATOMICAL_SITE	BIOBANK	SAMPLE_COLLECTION	STUDY
+00102-00002369	00102-00000396	Serum	RT	2004-06-10T14:22:00	EFO:0000815\Experimental Factor Ontology (EFO)\2.62\EFO\A myogenic muscular organ found in the cardiovascular system	2038	SC1	100
+00102-00005320	00102-00005319	DNA	2°C to 10°C	2004-11-02T13:30:01	EFO:0000815\Experimental Factor Ontology (EFO)\2.62\EFO\A myogenic muscular organ found in the cardiovascular system			100
+00102-00009072	00102-00007879	Serum	-18°C to -35°C	2005-01-11T15:28:00	EFO:0000815\Experimental Factor Ontology (EFO)\2.62\EFO\A myogenic muscular organ found in the cardiovascular system	2038	SC1	
