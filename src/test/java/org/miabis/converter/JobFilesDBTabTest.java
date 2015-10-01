@@ -32,6 +32,10 @@ public class JobFilesDBTabTest {
 	public void testLaunchJob() throws Exception {
 		JobParametersBuilder pb = new JobParametersBuilder();
 		pb.addString("contactInfo", DIRECTORY + "contactInfo.txt");
+		pb.addString("biobank", DIRECTORY + "biobank.txt");
+		pb.addString("sampleCollection", DIRECTORY + "sampleCollection.txt");
+		pb.addString("study", DIRECTORY + "study.txt");
+		pb.addString("sample", DIRECTORY + "sample.txt");
 		jobLauncher.run(job, pb.toJobParameters());
 	}
 
