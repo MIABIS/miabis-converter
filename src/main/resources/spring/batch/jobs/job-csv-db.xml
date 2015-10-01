@@ -14,23 +14,48 @@
 	<context:property-placeholder location="/spring/properties/database.properties" />
  	
  	<batch:job id="job1">
-		<batch:step id="step1"  >			
+		<batch:step id="step1" next="step2">			
 			<batch:tasklet transaction-manager="transactionManager" start-limit="100" >
 				<batch:chunk reader="contactInfoReader" writer="contactInfoWriter" commit-interval="100" />
 			</batch:tasklet>
 		</batch:step>
+		
+		<batch:step id="step2" next="step3">			
+			<batch:tasklet transaction-manager="transactionManager" start-limit="100" >
+				<batch:chunk reader="biobankReader" writer="biobankWriter" commit-interval="100" />
+			</batch:tasklet>
+		</batch:step>
+		
+		<batch:step id="step3" next="step4">			
+			<batch:tasklet transaction-manager="transactionManager" start-limit="100" >
+				<batch:chunk reader="sampleCollectionReader" writer="sampleCollectionWriter" commit-interval="100" />
+			</batch:tasklet>
+		</batch:step>
+		
+		<batch:step id="step4" next="step5">			
+			<batch:tasklet transaction-manager="transactionManager" start-limit="100" >
+				<batch:chunk reader="studyReader" writer="studyWriter" commit-interval="100" />
+			</batch:tasklet>
+		</batch:step>
+		
+		<batch:step id="step5">			
+			<batch:tasklet transaction-manager="transactionManager" start-limit="100" >
+				<batch:chunk reader="sampleReader" writer="sampleWriter" commit-interval="100" />
+			</batch:tasklet>
+		</batch:step>
+		 
 	</batch:job>
 	
 	
  	<!-- Parent beans definition -->
  	
  	<!-- Parent Field Set Mapper -->
- 	<bean id="parentFieldSetMapper" class="org.miabis.converter.transform.TitleAwareFieldSetMapper">
+ 	<bean id="parentFieldSetMapper" class="org.miabis.converter.transform.TitleAwareFieldSetMapper" abstract="true">
 		<constructor-arg value="example.mapping.properties"/>
 	</bean>
  	
  	<!-- Parent line mapper -->
- 	<bean id="parentLineMapper" class="org.miabis.converter.transform.LineTokenizerAwareLineMapper">
+ 	<bean id="parentLineMapper" class="org.miabis.converter.transform.LineTokenizerAwareLineMapper" abstract="true">
 		<property name="lineTokenizer">
 			<bean name="lineTokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
 				<property name="delimiter">
@@ -41,11 +66,10 @@
 				</property>
 			</bean>
 		</property>
-		<property name="fieldSetMapper" ref="parentFieldSetMapper"/>
 	</bean>
  	
  	<!-- Parent reader -->
- 	<bean id="parentReader" class="org.miabis.converter.batch.reader.TitleAwareFlatFileItemReader">
+ 	<bean id="parentReader" class="org.miabis.converter.batch.reader.TitleAwareFlatFileItemReader" abstract="true">
  		<property name="hasTitles" value="true"/>
 		<property name="strict" value="true"/>
 		<property name="delimiter">
@@ -56,22 +80,13 @@
             	<value>#</value>
         	</list>
 		</property>
-		<property name="lineMapper" ref="parentLineMapper"/> 
  	</bean>
  	
  	<!-- Parent writer -->
- 	<bean id="parentWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+ 	<bean id="parentWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter" abstract="true">
         <property name="dataSource" ref="dataSource" />
         <property name="itemPreparedStatementSetter">
-        	<bean class="org.springframework.batch.item.database.support.ColumnMapItemPreparedStatementSetter"/>
-        </property>
-        <property name="sql">
-            <value>
-                <![CDATA[        
-                    insert into CONTACT_INFORMATION(id,	firstName, lastName, phone, email,	address, zip, city, country) 
-                    values (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ]]>
-            </value>
+        	<bean class="org.miabis.converter.batch.database.ArrayItemPreparedStatementSetter"/>
         </property>
   	</bean>
  	
@@ -102,15 +117,98 @@
 		</property>
 	</bean>
 	
+	<bean id="sampleCollectionReader"  parent="parentReader" scope="step">
+		<property name="resource" value="#{jobParameters['sampleCollection']}"/>
+		<property name="lineMapper">
+			<bean parent="parentLineMapper">
+				<property name="fieldSetMapper">
+					<bean parent="parentFieldSetMapper">
+						<property name="dbNames" value="${db.sample.collection.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	<bean id="studyReader"  parent="parentReader" scope="step">
+		<property name="resource" value="#{jobParameters['study']}"/>
+		<property name="lineMapper">
+			<bean parent="parentLineMapper">
+				<property name="fieldSetMapper">
+					<bean parent="parentFieldSetMapper">
+						<property name="dbNames" value="${db.study.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	<bean id="sampleReader"  parent="parentReader" scope="step">
+		<property name="resource" value="#{jobParameters['sample']}"/>
+		<property name="lineMapper">
+			<bean parent="parentLineMapper">
+				<property name="fieldSetMapper">
+					<bean parent="parentFieldSetMapper">
+						<property name="dbNames" value="${db.sample.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	<!-- Writer -->
 	<bean id="contactInfoWriter" parent="parentWriter" scope="step">
         <property name="sql">
             <value>
                 <![CDATA[        
-                    insert into CONTACT_INFORMATION(id,	firstName, lastName, phone, email,	address, zip, city, country) 
+                    insert into CONTACT_INFORMATION(ID, FIRST_NAME, LAST_NAME, PHONE, EMAIL, ADDRESS, ZIP, CITY, COUNTRY) 
                     values (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ]]>
             </value>
         </property>
   	</bean>
-	
+  	
+  	<bean id="biobankWriter" parent="parentWriter" scope="step">
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into BIOBANK(ID, ACRONYM, NAME, URL, JURISTIC_PERSON, CONTACT_INFORMATION, DESCRIPTION, COUNTRY) 
+                    values (?, ?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
+  	
+  	<bean id="sampleCollectionWriter" parent="parentWriter" scope="step">
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into SAMPLE_COLLECTION(ID, ACRONYM, NAME, DESCRIPTION, SEX, AGE_LOW, AGE_HIGH, AGE_UNIT, DATA_CATEGORY, COLLECTION_TYPE, DISEASES, CONTACT_INFORMATION) 
+                    values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
+  	
+  	<bean id="studyWriter" parent="parentWriter" scope="step">
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into STUDY(ID, NAME, DESCRIPTION, PRINCIPAL_INVESTIGATOR, CONTACT_INFORMATION, STUDY_DESIGN, SEX, AGE_LOW, AGE_HIGH, AGE_UNIT, DATA_CATEGORY, TOTAL_NUMBER_OF_PARTICIPANTS, TOTAL_NUMBER_OF_DONORS, INCLUSION_CRITERIA) 
+                    values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
+  	
+  	<bean id="sampleWriter" parent="parentWriter" scope="step">
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into SAMPLE(ID, PARENT_SAMPLE_ID, MATERIAL_TYPE, STORAGE_TEMPERATURE, SAMPLED_TIME, ANATOMICAL_SITE, BIOBANK, SAMPLE_COLLECTION, STUDY) 
+                    values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
 </beans>
