@@ -5,7 +5,6 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineCallbackHandler;
 import org.springframework.batch.item.file.LineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 
 /**
  * This class is a simple extension of the FlatFileItemReader. 
