@@ -52,9 +52,6 @@ public class SampleTabTransformTest {
 		
 		Sample sample1 = mapper.mapLine(sampleStr, 0);
 		
-		System.out.println(sample);
-		System.out.println(sample1);
-		
 		assertEquals(sample.getBiobank(), sample1.getBiobank());
 		assertEquals(sample.getStudy(), sample1.getStudy());
 		
@@ -191,7 +188,7 @@ public class SampleTabTransformTest {
 		study.setName("study name");
 		study.setDescription("just a study");
 		
-		study.setPrincipalInvestigator("very important PI");
+		study.setPrincipalInvestigator(ci);
 		study.setContactInformation(ci);
 		
 		List<CollectionType> sDesign = study.getStudyDesign();
