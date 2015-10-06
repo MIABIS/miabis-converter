@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.miabis.converter.batch.reader.TitleAwareFlatFileItemReader;
 import org.springframework.batch.item.ExecutionContext;
@@ -21,13 +21,13 @@ public class TitleAwareFieldSetMapperTest {
 
 	@Autowired
 	@Qualifier("titleAwareFlatFileReader")
-	private TitleAwareFlatFileItemReader<Map<String,String>> awareReader;
+	private TitleAwareFlatFileItemReader<String[]> awareReader;
 	
 	@Autowired
 	@Qualifier("swappedFlatFileReader")
-	private TitleAwareFlatFileItemReader<Map<String,String>> swappedReader;
+	private TitleAwareFlatFileItemReader<String[]> swappedReader;
 	
-	private Map<String, String> expectedMap;
+	private String[] expectedLine;
 	
 	private static final String DIRECTORY = "src/test/resources/data/input/";
 	
@@ -44,9 +44,9 @@ public class TitleAwareFieldSetMapperTest {
 		
 		awareReader.open(new ExecutionContext());
 		
-		Map<String, String> line = awareReader.read();
+		String[] line = awareReader.read();
 		
-		Assert.assertEquals(expectedMap, line);
+		Assert.assertArrayEquals(expectedLine, line);
 		
 		awareReader.close();
 	}
@@ -56,24 +56,15 @@ public class TitleAwareFieldSetMapperTest {
 		
 		swappedReader.open(new ExecutionContext());
 		
-		Map<String, String> line = swappedReader.read();
+		String[] line = swappedReader.read();
 		
-		Assert.assertEquals(expectedMap, line);
+		Assert.assertArrayEquals(expectedLine, line);
 		
 		swappedReader.close();
 	}
 
 	@Before
 	public void populateMap(){
-		expectedMap = new HashMap<String,String>();
-		expectedMap.put("contactInformation_id", "1");
-		expectedMap.put("contactInformation_firstName", "Bilbo");
-		expectedMap.put("contactInformation_lastName", "Baggins");
-		expectedMap.put("contactInformation_phone", "");
-		expectedMap.put("contactInformation_email", "bilbo@middleearth.com");
-		expectedMap.put("contactInformation_address", "Bag End 01");
-		expectedMap.put("contactInformation_zip", "");
-		expectedMap.put("contactInformation_city", "Hobbiton");
-		expectedMap.put("contactInformation_country", "Middle Earth");
+		expectedLine = new String[] {"1", "Bilbo", "Baggins", null, "bilbo@middleearth.com", "Bag End 01", null, "Hobbiton", "Middle Earth"};
 	}
 }
