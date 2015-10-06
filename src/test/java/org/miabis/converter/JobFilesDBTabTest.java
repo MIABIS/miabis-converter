@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class JobFilesDBTabTest {
 	
 	private static final String DIRECTORY = "data/input/";
+	private static final String DIRECTORY_OUT = "data/output/";
 	
 	@Autowired
 	private JobLauncher jobLauncher;
@@ -36,6 +37,7 @@ public class JobFilesDBTabTest {
 		pb.addString("sampleCollection", DIRECTORY + "sampleCollection.txt");
 		pb.addString("study", DIRECTORY + "study.txt");
 		pb.addString("sample", DIRECTORY + "sample.txt");
+		pb.addString("tab.output",DIRECTORY_OUT + "db.out.tab");
 		jobLauncher.run(job, pb.toJobParameters());
 	}
 
