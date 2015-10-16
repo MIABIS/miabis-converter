@@ -28,17 +28,31 @@ public class MiabisEncoder {
 	 * @param contact
 	 * @return
 	 */
-	public String encodeContact(ContactInformation contact){
+	public String encodeContactInformation(ContactInformation contact){
+		String encode = "";
 		
-		List<String> contactLst =  (contact == null) ? new ArrayList<String>() : Arrays.asList(contact.getId(), contact.getFirstname(), contact.getLastname(), 
-		                                  contact.getPhone(), contact.getEmail(), contact.getAddress(), 
-		                                  contact.getZip(), contact.getCity() , contact.getCountry());
-		
-		return Joiner.on(CONTACT_DELIMITER).useForNull("").join(contactLst);
+		if(contact != null){
+			List<String> contactLst =  Arrays.asList(contact.getId(), contact.getFirstname(), contact.getLastname(), 
+			                                  contact.getPhone(), contact.getEmail(), contact.getAddress(), 
+			                                  contact.getZip(), contact.getCity() , contact.getCountry());
+			
+			encode = Joiner.on(CONTACT_DELIMITER).useForNull("").join(contactLst);
+		}	
+		return encode;
 	}
 	
 	public String encodeOntologyTerm(OntologyTerm term){
-		return (term == null) ? "" : term.getId() + CONTACT_DELIMITER + term.getOntology() + CONTACT_DELIMITER + term.getVersion() + CONTACT_DELIMITER + term.getCode() + CONTACT_DELIMITER + term.getDescription();
+		
+		String encode = "";
+		
+		if(term != null){
+			List<String> termLst = Arrays.asList(term.getId(), term.getOntology(), term.getVersion(),
+					term.getCode(), term.getDescription());
+
+			encode = Joiner.on(CONTACT_DELIMITER).useForNull("").join(termLst);
+		}
+		
+		return encode;
 	}
 	
 	public OntologyTerm decodeOntologyTerm(String term){
@@ -64,7 +78,7 @@ public class MiabisEncoder {
 		
 		List<String> cStrLst = new ArrayList<String>();
 		for(ContactInformation ci : contactLst){
-			cStrLst.add(encodeContact(ci));
+			cStrLst.add(encodeContactInformation(ci));
 		}
 		
 		return String.join(DELIMITER, cStrLst);
@@ -77,24 +91,37 @@ public class MiabisEncoder {
 	 */
 	public String encodeDisease(Disease disease){
 		
-		List<String> diseaseLst = Arrays.asList(disease.getId(), disease.getOntology(), disease.getVersion(), 
-				disease.getCode(), disease.getDescription(), disease.getFreeText());
+		String encode = "";
+		
+		if(disease != null){
+			List<String> diseaseLst = Arrays.asList(disease.getId(), disease.getOntology(), disease.getVersion(), 
+					disease.getCode(), disease.getDescription(), disease.getFreeText());
 
-		return Joiner.on(CONTACT_DELIMITER).useForNull("").join(diseaseLst);
+			encode = Joiner.on(CONTACT_DELIMITER).useForNull("").join(diseaseLst);
+		}
+		
+		return encode;
 	}
 	
 	/**
-	 * Returns a String that represents a list of diseases by calling <i>processDisease</i>
-	 * @param diseaseLst a list of diseases
-	 * @return a String representing a list of diseases
+	 * Decodes a formatted string and returns a <i>Disease</i> object
+	 * @param str
+	 * @return disease object
 	 */
-	public String encodeDisease(List<Disease> diseaseLst){
-		List<String> dStrLst = new ArrayList<String>();
-		for(Disease d : diseaseLst){
-			dStrLst.add(encodeDisease(d));
-		}
+	public Disease decodeDisease(String str){
+		List<String> values = getTokens(str);
 		
-		return String.join(DELIMITER, dStrLst);
+		Disease d = null;
+		if(values.size() == 6){
+			d = new Disease();
+			d.setId(values.get(0));
+			d.setOntology(values.get(1));
+			d.setVersion(values.get(2));
+			d.setCode(values.get(3));
+			d.setDescription(values.get(4));
+			d.setFreeText(values.get(5));
+		}
+		return d;
 	}
 	
 	/**
@@ -130,8 +157,9 @@ public class MiabisEncoder {
 		
 		List<String> values = getTokens(str);
 
-		ContactInformation ci = new ContactInformation();
+		ContactInformation ci = null;
 		if(values.size() == 9){
+			ci = new ContactInformation();
 			ci.setId(values.get(0));
 			ci.setFirstname(values.get(1));
 			ci.setLastname(values.get(2));
@@ -143,26 +171,6 @@ public class MiabisEncoder {
 			ci.setCountry(values.get(8));
 		}
 		return ci;
-	}
-	
-	/**
-	 * Decodes a formatted string and returns a <i>Disease</i> object
-	 * @param str
-	 * @return disease object
-	 */
-	public Disease decodeDisease(String str){
-		List<String> values = getTokens(str);
-		
-		Disease d = new Disease();
-		if(values.size() == 6){
-			d.setId(values.get(0));
-			d.setOntology(values.get(1));
-			d.setVersion(values.get(2));
-			d.setCode(values.get(3));
-			d.setDescription(values.get(4));
-			d.setFreeText(values.get(5));
-		}
-		return d;
 	}
 	
 	/**
@@ -181,6 +189,7 @@ public class MiabisEncoder {
 	 * @return a list of Strings
 	 */
 	private List<String> getTokens(String str){
+		
 		List<String> values = Lists.newArrayList(Splitter.on(CONTACT_DELIMITER).trimResults().split(str));
 		ListIterator<String> i = values.listIterator();
 		
