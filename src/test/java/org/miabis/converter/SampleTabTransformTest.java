@@ -91,15 +91,13 @@ public class SampleTabTransformTest {
 		Disease d = new Disease();
 		d.setCode("123");
 		
-		sc.getDiseases().add(d);
-		
 		Sample sample = new Sample();
-		sample.setSamplecollection(sc);
+		sample.setDisease(d);
 		
 		String sampleStr = aggregator.aggregate(sample);
 		Sample mappedSample = mapper.mapLine(sampleStr, 0);
 		
-		assertEquals(sample.getSamplecollection(), mappedSample.getSamplecollection());
+		assertEquals(sample.getDisease(), mappedSample.getDisease());
 	}
 	
 	//Create a sample
@@ -122,6 +120,23 @@ public class SampleTabTransformTest {
 		
 		sample.setAnatomicalSite(as);
 		
+		sample.setAgeLow(5);
+		sample.setAgeHigh(90);
+		sample.setAgeUnit(TimeUnit.YEAR);
+		
+		Disease d = new Disease();
+		d.setId("disease id");
+		d.setOntology("ontology");
+		d.setVersion("version");
+		d.setCode("code");
+		d.setDescription("desc");
+		d.setFreeText("free text");
+		
+		sample.setDisease(d);
+		
+		sample.setSex(Sex.FEMALE);
+		
+		//Biobank
 		bb = new Biobank();
 		bb.setId("my bb");
 		bb.setAcronym("acronym");
@@ -152,15 +167,6 @@ public class SampleTabTransformTest {
 		sc.setName("sc name");
 		sc.setDescription("just a sample col");
 		
-		List<Sex> sexLst = sc.getSex();
-		sexLst.add(Sex.FEMALE);
-		sexLst.add(Sex.MALE);
-		sexLst.add(Sex.UNDIFFERENTIATED);
-		
-		sc.setAgeLow(5);
-		sc.setAgeHigh(90);
-		sc.setAgeUnit(TimeUnit.YEAR);
-		
 		List<DataCategory> dCat = sc.getDataCategory();
 		dCat.add(DataCategory.BIOLOGICAL_SAMPLES);
 		dCat.add(DataCategory.IMAGING_DATA);
@@ -169,15 +175,6 @@ public class SampleTabTransformTest {
 		ctLst.add(CollectionType.BIRTH_COHORT);
 		ctLst.add(CollectionType.LONGITUDINAL);
 		
-		Disease d = new Disease();
-		d.setId("disease id");
-		d.setOntology("ontology");
-		d.setVersion("version");
-		d.setCode("code");
-		d.setDescription("desc");
-		d.setFreeText("free text");
-		
-		sc.getDiseases().add(d);
 		sc.setContactInformation(ci);
 				
 		sample.setSamplecollection(sc);
@@ -194,15 +191,6 @@ public class SampleTabTransformTest {
 		List<CollectionType> sDesign = study.getStudyDesign();
 		sDesign.add(CollectionType.BIRTH_COHORT);
 		sDesign.add(CollectionType.DISEASE_SPECIFIC);
-		
-		sexLst = study.getSex();
-		sexLst.add(Sex.FEMALE);
-		sexLst.add(Sex.MALE);
-		sexLst.add(Sex.UNDIFFERENTIATED);
-		
-		study.setAgeLow(10);
-		study.setAgeHigh(90);
-		study.setAgeUnit(TimeUnit.YEAR);
 		
 		List<DataCategory> sDCat = study.getDataCategory();
 		sDCat.add(DataCategory.GENEALOGICAL_RECORDS);
