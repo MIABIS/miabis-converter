@@ -188,7 +188,6 @@ public class SampleRowMapper implements RowMapper<Sample> {
 		sc.setContactInformation(getContactInformation(64, rs));
 		
 		sample.setSamplecollection(sc);
-		System.out.println(sc);
 		return sample;
 	}
 
