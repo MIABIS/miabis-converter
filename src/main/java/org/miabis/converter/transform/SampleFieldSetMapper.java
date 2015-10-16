@@ -68,115 +68,102 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		// Anatomical Site
 		sample.setAnatomicalSite(encoder.decodeOntologyTerm(fieldSet.readString(columns[5])));
 		
+		// Disease
+		sample.setDisease(encoder.decodeDisease(fieldSet.readString(columns[6])));
+		
+		//Sex
+		try{
+			sample.setSex(Sex.fromValue(fieldSet.readString(columns[7])));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+				
+		//Age
+		try{
+			sample.setAgeLow(fieldSet.readInt(columns[8]));
+		}catch(NumberFormatException e){
+			e.printStackTrace();
+		}
+		
+		try{
+			sample.setAgeHigh(fieldSet.readInt(columns[9]));
+		}catch(NumberFormatException e){
+			e.printStackTrace();
+		}
+		
+		try{
+			sample.setAgeUnit(TimeUnit.fromValue(fieldSet.readString(columns[10])));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+				
+		//Container
+		sample.setContainer(fieldSet.readString(columns[11]));
+		
 		//Biobank
 		Biobank bb = new Biobank();
-		bb.setId(fieldSet.readString(columns[6]));
-		bb.setAcronym(fieldSet.readString(columns[7]));
-		bb.setName(fieldSet.readString(columns[8]));
-		bb.setUrl(fieldSet.readString(columns[9]));
-		bb.setJuristicPerson(fieldSet.readString(columns[10]));
+		bb.setId(fieldSet.readString(columns[12]));
+		bb.setAcronym(fieldSet.readString(columns[13]));
+		bb.setName(fieldSet.readString(columns[14]));
+		bb.setUrl(fieldSet.readString(columns[15]));
+		bb.setJuristicPerson(fieldSet.readString(columns[16]));
 		
 		//ContactInfo
-		bb.setContactInformation(encoder.decodeContactInformation(fieldSet.readString(columns[11])));
+		bb.setContactInformation(encoder.decodeContactInformation(fieldSet.readString(columns[17])));
 		
-		bb.setDescription(fieldSet.readString(columns[12]));
-		bb.setCountry(fieldSet.readString(columns[13]));
+		bb.setDescription(fieldSet.readString(columns[18]));
+		bb.setCountry(fieldSet.readString(columns[19]));
 		sample.setBiobank(bb);
 		
 		//Sample Collection
 		SampleCollection sc = new SampleCollection();
-		sc.setId(fieldSet.readString(columns[14]));
-		sc.setAcronym(fieldSet.readString(columns[15]));
-		sc.setName(fieldSet.readString(columns[16]));
-		sc.setDescription(fieldSet.readString(columns[17]));
-		
-		List<Sex> sexLst = sc.getSex();
-		encoder.getListStream(fieldSet.readString(columns[18])).forEach(sex -> sexLst.add(Sex.fromValue(sex)));
-		
-		try{
-			sc.setAgeLow(fieldSet.readInt(columns[19]));
-		}catch(NumberFormatException e){
-			e.printStackTrace();
-		}
-		
-		try{
-			sc.setAgeHigh(fieldSet.readInt(columns[20]));
-		}catch(NumberFormatException e){
-			e.printStackTrace();
-		}
-		
-		try{
-			sc.setAgeUnit(TimeUnit.fromValue(fieldSet.readString(columns[21])));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		sc.setId(fieldSet.readString(columns[20]));
+		sc.setAcronym(fieldSet.readString(columns[21]));
+		sc.setName(fieldSet.readString(columns[22]));
+		sc.setDescription(fieldSet.readString(columns[23]));
 		
 		List<DataCategory> dCat = sc.getDataCategory();
-		encoder.getListStream(fieldSet.readString(columns[22])).forEach(cat -> dCat.add(DataCategory.fromValue(cat)));
+		encoder.getListStream(fieldSet.readString(columns[24])).forEach(cat -> dCat.add(DataCategory.fromValue(cat)));
 		
 		List<CollectionType> ctLst = sc.getCollectionType();
-		encoder.getListStream(fieldSet.readString(columns[23])).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));
+		encoder.getListStream(fieldSet.readString(columns[25])).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));
 		
-		List<Disease> dLst = sc.getDiseases();
-		encoder.getListStream(fieldSet.readString(columns[24])).forEach(d -> dLst.add(encoder.decodeDisease(d)));
-		
-		sc.setContactInformation(encoder.decodeContactInformation(fieldSet.readString(columns[25])));
+		sc.setContactInformation(encoder.decodeContactInformation(fieldSet.readString(columns[26])));
 		
 		sample.setSamplecollection(sc);
 		
 		//Study
 		Study study = new Study();
 		
-		study.setId(fieldSet.readString(columns[26]));
-		study.setName(fieldSet.readString(columns[27]));
-		study.setDescription(fieldSet.readString(columns[28]));
+		study.setId(fieldSet.readString(columns[27]));
+		study.setName(fieldSet.readString(columns[28]));
+		study.setDescription(fieldSet.readString(columns[29]));
 		
-		study.setPrincipalInvestigator(encoder.decodeContactInformation(fieldSet.readString(columns[29])));
+		study.setPrincipalInvestigator(encoder.decodeContactInformation(fieldSet.readString(columns[30])));
 		
 		//ContactInfo
-		study.setContactInformation(encoder.decodeContactInformation(fieldSet.readString(columns[30])));
+		study.setContactInformation(encoder.decodeContactInformation(fieldSet.readString(columns[31])));
 		
 		List<CollectionType> sDesign = study.getStudyDesign();
-		encoder.getListStream(fieldSet.readString(columns[31])).forEach(sd -> sDesign.add(CollectionType.fromValue(sd)));
-		
-		List<Sex> sSexLst = study.getSex();
-		encoder.getListStream(fieldSet.readString(columns[32])).forEach(sex -> sSexLst.add(Sex.fromValue(sex)));
-		
-		try{
-			study.setAgeLow(fieldSet.readInt(columns[33]));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		try{
-			study.setAgeHigh(fieldSet.readInt(columns[34]));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		try{
-			study.setAgeUnit(TimeUnit.fromValue(fieldSet.readString(columns[35])));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		encoder.getListStream(fieldSet.readString(columns[32])).forEach(sd -> sDesign.add(CollectionType.fromValue(sd)));
 		
 		List<DataCategory> sDCat = study.getDataCategory();
-		encoder.getListStream(fieldSet.readString(columns[36])).forEach(cat -> sDCat.add(DataCategory.fromValue(cat)));
+		encoder.getListStream(fieldSet.readString(columns[33])).forEach(cat -> sDCat.add(DataCategory.fromValue(cat)));
 		
 		try{
-			study.setTotalNumberOfParticipants(fieldSet.readInt(columns[37]));
+			study.setTotalNumberOfParticipants(fieldSet.readInt(columns[34]));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		try{
-			study.setTotalNumberOfDonors(fieldSet.readInt(columns[38]));
+			study.setTotalNumberOfDonors(fieldSet.readInt(columns[35]));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		List<InclusionCriteria> iLst = study.getInclusionCriteria();
-		encoder.getListStream(fieldSet.readString(columns[39])).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
+		encoder.getListStream(fieldSet.readString(columns[36])).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
 		
 		sample.setStudy(study);
 		

@@ -6,6 +6,7 @@ import java.util.ListIterator;
 
 import org.miabis.converter.batch.util.MiabisEncoder;
 import org.miabis.exchange.schema.Biobank;
+import org.miabis.exchange.schema.Disease;
 import org.miabis.exchange.schema.OntologyTerm;
 import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
@@ -27,7 +28,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 	 * @return an array of strings representing a Sample
 	 */
 	@Override
-	public Object[] extract(Sample sample) {
+	public String[] extract(Sample sample) {
 		
 		List<String> values = new ArrayList<String>();
 		
@@ -54,6 +55,21 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		OntologyTerm aSite = sample.getAnatomicalSite() ;
 		values.add(encoder.encodeOntologyTerm(aSite));
 		
+		// Disease
+		Disease disease = sample.getDisease();
+		values.add(encoder.encodeDisease(disease));
+		
+		//Sex
+		values.add(sample.getSex() != null ? sample.getSex().value() : "");
+		
+		//Age
+		values.add(sample.getAgeLow() + "");
+		values.add(sample.getAgeHigh() + "");
+		values.add((sample.getAgeUnit() != null) ? sample.getAgeUnit().value() : "");
+		
+		//Container
+		values.add(sample.getContainer() != null ? sample.getContainer() : "");
+		
 		//Biobank
 		Biobank bb = (sample.getBiobank() != null) ? sample.getBiobank() : new Biobank();
 		
@@ -65,7 +81,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		String jp = (bb.getJuristicPerson() != null) ? bb.getJuristicPerson() : "";
 		values.add(jp);
 		
-		values.add(encoder.encodeContact(bb.getContactInformation()));
+		values.add(encoder.encodeContactInformation(bb.getContactInformation()));
 			
 		values.add(bb.getDescription());
 		values.add(bb.getCountry());
@@ -78,17 +94,10 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(sc.getName());
 		values.add(sc.getDescription());
 			
-		values.add(encoder.encodeValues(sc.getSex()));
-			
-		values.add(sc.getAgeLow() + "");
-		values.add(sc.getAgeHigh() + "");
-		values.add((sc.getAgeUnit() != null) ? sc.getAgeUnit().value() : "");
-			
 		values.add(encoder.encodeValues(sc.getDataCategory()));
 		values.add(encoder.encodeValues(sc.getCollectionType()));
-		values.add(encoder.encodeDisease(sc.getDiseases()));
 			
-		values.add(encoder.encodeContact(sc.getContactInformation()));
+		values.add(encoder.encodeContactInformation(sc.getContactInformation()));
 
 		//Study
 		Study study = (sample.getStudy() != null) ? sample.getStudy() : new Study();
@@ -96,19 +105,13 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(study.getId());
 		values.add(study.getName());
 		values.add(study.getDescription());
-		values.add(encoder.encodeContact(study.getPrincipalInvestigator()));
+		values.add(encoder.encodeContactInformation(study.getPrincipalInvestigator()));
 		
-		values.add(encoder.encodeContact(study.getContactInformation()));
+		values.add(encoder.encodeContactInformation(study.getContactInformation()));
 		
 		values.add(encoder.encodeValues(study.getStudyDesign()));
-		values.add(encoder.encodeValues(study.getSex()));
-		
-		values.add(study.getAgeLow() + "");
-		values.add(study.getAgeHigh() + "");
-		values.add((study.getAgeUnit() != null) ? study.getAgeUnit().value() : "");
 		
 		values.add(encoder.encodeValues(study.getDataCategory()));
-		
 		
 		values.add(study.getTotalNumberOfParticipants() + "");
 		values.add(study.getTotalNumberOfDonors() + "");
@@ -122,6 +125,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 				it.set("");
 			}
 		}
-		return values.toArray();
+		
+		return values.toArray(new String[0]);
 	}
 }
