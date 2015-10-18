@@ -3,17 +3,21 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.springframework.samples.batch</groupId>
+	<groupId>org.miabis.converter</groupId>
 	<artifactId>miabis-converter</artifactId>
 	<version>1.0.0.SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Miabis Converter</name>
+	<url>https://github.com/MIABIS/miabis-converter</url>
+	<description>MIABIS converter is a tool that aims to facilitate the migration of different formats to MIABIS sample exchange compliant XML. It is sample centered and its based on the miabis-sample-exchange-format.</description>
+	
 	<properties>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<spring.framework.version>4.2.1.RELEASE</spring.framework.version>
 		<spring.batch.version>3.0.5.RELEASE</spring.batch.version>
 		<jdk.version>1.8</jdk.version>
 	</properties>
+	
 	<profiles>
 		<profile>
 			<id>strict</id>
@@ -24,7 +28,7 @@
 		<profile>
 			<id>tiger</id>
 			<activation>
-				<jdk>1.8</jdk>
+				<jdk>1.5</jdk>
 			</activation>
 			<dependencies>
 				<dependency>
@@ -35,8 +39,8 @@
 			</dependencies>
 		</profile>	 
 	</profiles>
-
-	<dependencies>
+ 
+ 	<dependencies>
 		<dependency>
 			<groupId>org.miabis.exchange.schema</groupId>
 			<artifactId>MIABIS-sample</artifactId>
@@ -169,75 +173,7 @@
 		</dependency>
 		
 	</dependencies>
-
-	<build>
-		<plugins>
-		
-			<!-- download source code in Eclipse, best practice -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.10</version>
-				<configuration>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>false</downloadJavadocs>
-				</configuration>
-			</plugin>
-			
-			<!-- Set a JDK compiler level -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-			
-			<!-- Make this jar executable -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<!-- DO NOT include log4j.properties file in your Jar -->
-				  	<excludes>
-						<exclude>**/log4j.properties</exclude>
-				  	</excludes>
-				  	<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<!-- Jar file entry point -->
-							<mainClass>org.miabis.converter.cli.ConverterCli</mainClass>
-							<classpathPrefix>dependency-jars/</classpathPrefix>
-						</manifest>
-				  	</archive>
-				</configuration>
-			</plugin>
-			
-			<!-- Copy project dependency -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
-				<executions>
-				  <execution>
-					<id>copy-dependencies</id>
-					<phase>package</phase>
-					<goals>
-						<goal>copy-dependencies</goal>
-					</goals>
-					<configuration>
-					  <!-- exclude junit, we need runtime dependency only -->
-					  <includeScope>runtime</includeScope>
-					  <outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
-					</configuration>
-				  </execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
- 
-	<url>https://github.com/MIABIS/miabis-converter</url>
-	<description>MIABIS converter is a tool that aims to facilitate the migration of different formats to MIABIS sample exchange compliant XML. It is sample centered and its based on the miabis-sample-exchange-format.</description>
+	
+	
+	
 </project>
