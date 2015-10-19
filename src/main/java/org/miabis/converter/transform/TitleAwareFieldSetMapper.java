@@ -30,8 +30,8 @@ public class TitleAwareFieldSetMapper implements FieldSetMapper<String[]> {
 		List<String> record = new ArrayList<String>();
 		
 		for(String db : dbNames){
-			String value = (properties.getProperty(db) != null) ? fieldSet.readString(properties.getProperty(db)) : null;
-			value = value.length() > 0 ? value : null; // if value is empty string then assign null
+			String value = (properties.getProperty(db) != null) ? fieldSet.readString(properties.getProperty(db)) : "";
+			value = (value.length() > 0) ? value : null; // if value is empty string then assign null
 			record.add(value);
 		}
 		return record.toArray(new String[0]);
