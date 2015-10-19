@@ -25,7 +25,7 @@
 				<maven.test.failure.ignore>false</maven.test.failure.ignore>
 			</properties>
 		</profile>
-		<profile>
+		<!-- <profile>
 			<id>tiger</id>
 			<activation>
 				<jdk>1.5</jdk>
@@ -37,7 +37,7 @@
 					<version>1.0.1</version>
 				</dependency>
 			</dependencies>
-		</profile>	 
+		</profile>	  -->
 	</profiles>
  
  	<dependencies>
