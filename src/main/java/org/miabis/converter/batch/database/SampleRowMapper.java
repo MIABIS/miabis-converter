@@ -12,6 +12,7 @@ import org.miabis.exchange.schema.DataCategory;
 import org.miabis.exchange.schema.Disease;
 import org.miabis.exchange.schema.InclusionCriteria;
 import org.miabis.exchange.schema.MaterialType;
+import org.miabis.exchange.schema.OntologyTerm;
 import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Sex;
@@ -45,6 +46,29 @@ public class SampleRowMapper implements RowMapper<Sample> {
 		return bbCi;
 	}
 	
+	private Disease getDisease(int startIndex, ResultSet rs) throws SQLException{
+		Disease disease = new Disease();
+		
+		disease.setOntology(rs.getString(startIndex++));
+		disease.setVersion(rs.getString(startIndex++));
+		disease.setCode(rs.getString(startIndex++));
+		disease.setDescription(rs.getString(startIndex++));
+		disease.setFreeText(rs.getString(startIndex++));
+		
+		return disease;
+	}
+	
+	private OntologyTerm getOntologyTerm(int startIndex, ResultSet rs) throws SQLException{
+		OntologyTerm ontologyTerm = new OntologyTerm();
+		
+		ontologyTerm.setOntology(rs.getString(startIndex++));
+		ontologyTerm.setVersion(rs.getString(startIndex++));
+		ontologyTerm.setCode(rs.getString(startIndex++));
+		ontologyTerm.setDescription(rs.getString(startIndex++));
+		
+		return ontologyTerm;
+	}
+	
 	@Override
 	public Sample mapRow(ResultSet rs, int rowNum) throws SQLException {
 		
@@ -60,132 +84,116 @@ public class SampleRowMapper implements RowMapper<Sample> {
 			e.printStackTrace();
 		}
 		
+		sample.setContainer(rs.getString(4));
+		
 		//Storage Temperature
 		try{
-			sample.setStorageTemperature(Temperature.fromValue(rs.getString(4)));
+			sample.setStorageTemperature(Temperature.fromValue(rs.getString(5)));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		//Sampled Time
 		try {
-			sample.setSampledTime(XsdDateTimeConverter.unmarshal(rs.getString(5)));
+			sample.setSampledTime(XsdDateTimeConverter.unmarshal(rs.getString(6)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		// Anatomical Site
-		sample.setAnatomicalSite(encoder.decodeOntologyTerm(rs.getString(6)));
+		sample.setAnatomicalSite(getOntologyTerm(7, rs));
+		
+		//Disease
+		sample.setDisease(getDisease(11, rs));
+		
+		try {
+			sample.setSex(Sex.fromValue(rs.getString(16)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		try{
+			sample.setAgeLow(rs.getInt(17));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		try{
+			sample.setAgeHigh(rs.getInt(18));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		try{
+			sample.setAgeUnit(TimeUnit.fromValue(rs.getString(19)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		//Biobank
 		Biobank bb = new Biobank();
-		bb.setId(rs.getString(7));
-		bb.setAcronym(rs.getString(8));
-		bb.setName(rs.getString(9));
-		bb.setUrl(rs.getString(10));
-		bb.setJuristicPerson(rs.getString(11));
-		bb.setCountry(rs.getString(12));
-		bb.setDescription(rs.getString(13));
+		bb.setId(rs.getString(20));
+		bb.setAcronym(rs.getString(21));
+		bb.setName(rs.getString(22));
+		bb.setUrl(rs.getString(23));
+		bb.setJuristicPerson(rs.getString(24));
+		bb.setCountry(rs.getString(25));
+		bb.setDescription(rs.getString(26));
 		
 		//Biobank ContactInfo
-		bb.setContactInformation(getContactInformation(14, rs));
+		bb.setContactInformation(getContactInformation(27, rs));
 		sample.setBiobank(bb);
 		
 		//Study
 		Study study = new Study();
 		
-		study.setId(rs.getString(23));
-		study.setName(rs.getString(24));
-		study.setDescription(rs.getString(25));
+		study.setId(rs.getString(36));
+		study.setName(rs.getString(37));
+		study.setDescription(rs.getString(38));
 		
 		List<CollectionType> sDesign = study.getStudyDesign();
-		encoder.getListStream(rs.getString(26)).forEach(sd -> sDesign.add(CollectionType.fromValue(sd)));
-		
-		List<Sex> sSexLst = study.getSex();
-		encoder.getListStream(rs.getString(27)).forEach(sex -> sSexLst.add(Sex.fromValue(sex)));
-		
-		try{
-			study.setAgeLow(rs.getInt(28));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		try{
-			study.setAgeHigh(rs.getInt(29));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		try{
-			study.setAgeUnit(TimeUnit.fromValue(rs.getString(30)));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		encoder.getListStream(rs.getString(39)).forEach(sd -> sDesign.add(CollectionType.fromValue(sd)));
 		
 		List<DataCategory> sDCat = study.getDataCategory();
-		encoder.getListStream(rs.getString(31)).forEach(cat -> sDCat.add(DataCategory.fromValue(cat)));
+		encoder.getListStream(rs.getString(40)).forEach(cat -> sDCat.add(DataCategory.fromValue(cat)));
 		
 		try{
-			study.setTotalNumberOfParticipants(rs.getInt(32));
+			study.setTotalNumberOfParticipants(rs.getInt(41));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		try{
-			study.setTotalNumberOfDonors(rs.getInt(33));
+			study.setTotalNumberOfDonors(rs.getInt(42));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		List<InclusionCriteria> iLst = study.getInclusionCriteria();
-		encoder.getListStream(rs.getString(34)).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
+		encoder.getListStream(rs.getString(43)).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
 		
 		//ContactInfo
-		study.setContactInformation(getContactInformation(35, rs));
+		study.setContactInformation(getContactInformation(44, rs));
 		
 		//PI
-		study.setPrincipalInvestigator(getContactInformation(44, rs));
+		study.setPrincipalInvestigator(getContactInformation(53, rs));
 		
 		sample.setStudy(study);
 		
 		//Sample Collection
 		SampleCollection sc = new SampleCollection();
-		sc.setId(rs.getString(53));
-		sc.setAcronym(rs.getString(54));
-		sc.setName(rs.getString(55));
-		sc.setDescription(rs.getString(56));
-		
-		List<Sex> sexLst = sc.getSex();
-		encoder.getListStream(rs.getString(57)).forEach(sex -> sexLst.add(Sex.fromValue(sex)));
-		
-		try{
-			sc.setAgeLow(rs.getInt(58));
-		}catch(NumberFormatException e){
-			e.printStackTrace();
-		}
-		
-		try{
-			sc.setAgeHigh(rs.getInt(59));
-		}catch(NumberFormatException e){
-			e.printStackTrace();
-		}
-		
-		try{
-			sc.setAgeUnit(TimeUnit.fromValue(rs.getString(60)));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		sc.setId(rs.getString(62));
+		sc.setAcronym(rs.getString(63));
+		sc.setName(rs.getString(64));
+		sc.setDescription(rs.getString(65));
 		
 		List<DataCategory> dCat = sc.getDataCategory();
-		encoder.getListStream(rs.getString(61)).forEach(cat -> dCat.add(DataCategory.fromValue(cat)));
+		encoder.getListStream(rs.getString(66)).forEach(cat -> dCat.add(DataCategory.fromValue(cat)));
 		
 		List<CollectionType> ctLst = sc.getCollectionType();
-		encoder.getListStream(rs.getString(62)).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));
+		encoder.getListStream(rs.getString(67)).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));
 		
-		List<Disease> dLst = sc.getDiseases();
-		encoder.getListStream(rs.getString(63)).forEach(d -> dLst.add(encoder.decodeDisease(d)));
-		
-		sc.setContactInformation(getContactInformation(64, rs));
+		sc.setContactInformation(getContactInformation(68, rs));
 		
 		sample.setSamplecollection(sc);
 		return sample;
