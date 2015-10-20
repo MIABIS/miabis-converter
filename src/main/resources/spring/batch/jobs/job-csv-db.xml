@@ -11,7 +11,7 @@
 
 	<description>XML bean definitions to test TitleAwareFlatFileReader</description>
 	
-	<context:property-placeholder location="/spring/properties/database.properties" />
+	<context:property-placeholder location="classpath*:**/database.properties" />
  	
  	<batch:job id="job1">
 		<batch:step id="step1" next="step2">			
@@ -57,7 +57,7 @@
  	
  	<!-- Parent Field Set Mapper -->
  	<bean id="parentFieldSetMapper" class="org.miabis.converter.transform.TitleAwareFieldSetMapper" abstract="true">
-		<constructor-arg value="example.mapping.properties"/>
+		<constructor-arg value="#{jobParameters['map']}"/>
 	</bean>
  	
  	<!-- Parent line mapper -->
