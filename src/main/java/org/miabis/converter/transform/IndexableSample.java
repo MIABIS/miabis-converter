@@ -2,16 +2,26 @@ package org.miabis.converter.transform;
 
 import java.time.LocalDateTime;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.miabis.exchange.schema.Biobank;
+import org.miabis.exchange.schema.Disease;
 import org.miabis.exchange.schema.MaterialType;
 import org.miabis.exchange.schema.OntologyTerm;
 import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
+import org.miabis.exchange.schema.Sex;
 import org.miabis.exchange.schema.Study;
 import org.miabis.exchange.schema.Temperature;
+import org.miabis.exchange.schema.TimeUnit;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.w3._2001.xmlschema.Adapter1;
 
 /**
  * Annotated version of the sample class so it can be indexed by elastic search.
@@ -22,12 +32,24 @@ public class IndexableSample{
 	
 	protected String id;
     protected String parentSampleId;
+    protected String container;
     
     @Field(type = FieldType.Nested)
     protected MaterialType materialType;
     protected Temperature storageTemperature;
     protected LocalDateTime sampledTime;
+    
+    @Field(type = FieldType.Nested)
     protected OntologyTerm anatomicalSite;
+    
+    @Field(type = FieldType.Nested)
+    protected Disease disease;
+    protected Sex sex;
+   
+    protected int ageLow;
+    protected int ageHigh;
+    protected TimeUnit ageUnit;
+    
     
     @Field(type = FieldType.Nested)
     protected Biobank biobank;
@@ -52,8 +74,7 @@ public class IndexableSample{
         
         this.biobank = sample.getBiobank();
         this.samplecollection = sample.getSamplecollection();
-        this.study = sample.getStudy();
-    	
+        this.study = sample.getStudy();	
     }
     
     public String getId() {
