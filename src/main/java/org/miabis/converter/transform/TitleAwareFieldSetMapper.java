@@ -1,5 +1,6 @@
 package org.miabis.converter.transform;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class TitleAwareFieldSetMapper implements FieldSetMapper<String[]> {
 		
 		properties = new Properties();
 		try {
-			properties.load(this.getClass().getClassLoader().getResourceAsStream(propertiesPath));
+			properties.load(new FileInputStream(propertiesPath));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
