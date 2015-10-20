@@ -1,4 +1,4 @@
-package org.miabis.converter.cli;
+ package org.miabis.converter.cli;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -21,9 +21,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 //@ContextConfiguration(locations={"/spring/batch/config/config.xml", "/spring/batch/jobs/job-csv-index.xml"})
 public class ConverterCli {
 	
-	private static Options options; 
-	private static String format = "tab";
+	private static Options options;
 	private static String clustersNodes = "localhost:9300";
+	private static String delimiter = Util.DELIMITER_TAB;
 
 	public static void main(String[] args) throws ParseException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 	
@@ -31,16 +31,8 @@ public class ConverterCli {
 				.argName("input file")
 				.longOpt("index")
 				.hasArg()
-				.required()
 				.desc("Index a file")
 				.build();
-		
-		/*Option formatOpt = Option.builder("f")
-				.argName("xml, tab")
-				.longOpt("format")
-				.hasArg()
-				.desc("with -i: input file format")
-				.build();*/
 		
 		Option clustersNodesOpt = Option.builder("c")
 				.argName("elastic search cluster")
@@ -49,17 +41,41 @@ public class ConverterCli {
 				.desc("with -i: elastic search cluster group. It defaults to "+clustersNodes)
 				.build();
 		
+		Option transformOpt = Option.builder("t")
+				.argName("input files")
+				.hasArgs()
+				.longOpt("transform")
+				.desc("transforms a set of files to MIABIS TAB. Five files must be supplied (sample, biobank, saple collection, study, contact information). The list of files must be separated by a space.")
+				.build();
+		
+		Option delimiterOpt = Option.builder("d")
+				.argName("column delimiter")
+				.longOpt("delimiter")
+				.hasArg()
+				.desc("with -t: column delimiter. It defaults to TAB")
+				.build();
+		
+		Option mapOpt = Option.builder("m")
+				.argName("map file")
+				.longOpt("map")
+				.hasArg()
+				.desc("with -t: miabis mapping file.")
+				.build();
+		
 		Option helpOpt = Option.builder("h")
 				.longOpt("help")
 				.desc("print this message")
 				.build();
 		
 		options = new Options();
+		
 		options.addOption(indexOpt);
-		//options.addOption(formatOpt);
 		options.addOption(clustersNodesOpt);
 		options.addOption(helpOpt);
 		
+		options.addOption(transformOpt);
+		options.addOption(delimiterOpt);
+		options.addOption(mapOpt);
 		
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd = null;
@@ -75,23 +91,63 @@ public class ConverterCli {
 			return;
 		}
 		
-		format = cmd.hasOption("f") ? cmd.getOptionValue('f') : format;
-		clustersNodes = cmd.hasOption("c") ? cmd.getOptionValue('c') : clustersNodes;
+		if(cmd.hasOption("i")){
 		
-		String inputFile = cmd.getOptionValue("i");
+			clustersNodes = cmd.hasOption("c") ? cmd.getOptionValue('c') : clustersNodes;
+			
+			String inputFile = cmd.getOptionValue("i");
+			
+			AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath*:**/config.xml", "classpath*:**/job-csv-index.xml"});
+			ctx.registerShutdownHook();
+			
+			Job job = (Job) ctx.getBean("job1");
+			JobLauncher jobLauncher = (JobLauncher) ctx.getBean("jobLauncher");
+			
+			JobParametersBuilder pb = new JobParametersBuilder();
+			pb.addString("tab.input", "file:"+inputFile);
+			pb.addString("clusters.nodes", clustersNodes);
+			pb.addString("columns", Util.COLUMNS);
+			
+			jobLauncher.run(job, pb.toJobParameters());
+			
+		}else if(cmd.hasOption("t")){
+			
+			if(!cmd.hasOption("m")){
+				System.out.println("No mapping file defined.");
+				return;
+			} 
+			
+			String map = cmd.getOptionValue("m");
+			delimiter = cmd.hasOption("d") ? cmd.getOptionValue('d') : delimiter;
+			
+			String[] files = cmd.getOptionValues("t");
+			
+			AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath*:**/database.xml", "classpath*:**/job-csv-db.xml"});
+			ctx.registerShutdownHook();
+			
+			JobParametersBuilder pb = new JobParametersBuilder();
+			pb.addString("sample", files[0]);
+			pb.addString("biobank",  files[1]);
+			pb.addString("sampleCollection", files[2]);
+			pb.addString("study", files[3]);
+			pb.addString("contactInfo", files[4]);
+			
+			//Map
+			pb.addString("map", map);
+			
+			//Output file
+			pb.addString("tab.output", "Miabis.tab");
+			
+			JobLauncher jobLauncher = (JobLauncher) ctx.getBean("jobLauncher");
+			Job job = (Job) ctx.getBean("job1");
+			
+			jobLauncher.run(job, pb.toJobParameters());
+			
+		}else{
+			printHelp();
+		}	
+
 		
-		AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath*:**/config.xml", "classpath*:**/job-csv-index.xml"});
-		ctx.registerShutdownHook();
-		
-		Job job = (Job) ctx.getBean("job1");
-		JobLauncher jobLauncher = (JobLauncher) ctx.getBean("jobLauncher");
-		
-		JobParametersBuilder pb = new JobParametersBuilder();
-		pb.addString("tab.input", "file:"+inputFile);
-		pb.addString("clusters.nodes", clustersNodes);
-		pb.addString("columns", Util.COLUMNS);
-		
-		jobLauncher.run(job, pb.toJobParameters());
 	}
 	
 	private static void printHelp(){
