@@ -37,6 +37,8 @@ public class JobFilesDBTabTest {
 		pb.addString("sampleCollection", DIRECTORY + "sampleCollection.txt");
 		pb.addString("study", DIRECTORY + "study.txt");
 		pb.addString("sample", DIRECTORY + "sample.txt");
+		
+		pb.addString("map","example.mapping.properties");
 		pb.addString("tab.output",DIRECTORY_OUT + "db.out.tab");
 		jobLauncher.run(job, pb.toJobParameters());
 	}
