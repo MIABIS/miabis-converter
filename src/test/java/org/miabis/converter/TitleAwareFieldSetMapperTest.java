@@ -43,6 +43,7 @@ public class TitleAwareFieldSetMapperTest {
 		
 		String[] line = awareReader.read();
 		
+		System.out.println(String.join(", ", line));
 		Assert.assertArrayEquals(expectedLine, line);
 		
 		awareReader.close();
