@@ -20,8 +20,13 @@ public class TitleAwareFieldSetMapper implements FieldSetMapper<String[]> {
 		properties = new Properties();
 		try {
 			properties.load(new FileInputStream(propertiesPath));
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			//Try to load from classpath for testing purpose
+			try {
+				properties.load(this.getClass().getClassLoader().getResourceAsStream(propertiesPath));
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
