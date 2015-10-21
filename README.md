@@ -30,9 +30,9 @@ usage: miabis-converter
                                          must be separated by a space.
  ```
  
- ## Examples
+## Examples
  
- ### Indexing files
+### Indexing files
  
  How to index a single MIABIS TAB file:
  ```
@@ -44,7 +44,7 @@ usage: miabis-converter
  java -jar miabis-converter-1.0.0-SNAPSHOT.jar -i sample.txt biobank.txt sampleCollection.txt study.txt contactInfo.txt -m example.mapping.properties
  ```
  
- ### Tranform a set of files into MIABIS TAB:
+### Tranform a set of files into MIABIS TAB:
  ```
  java -jar miabis-converter-1.0.0-SNAPSHOT.jar -t sample.txt biobank.txt sampleCollection.txt study.txt contactInfo.txt -m example.mapping.properties -d ,
  ```
