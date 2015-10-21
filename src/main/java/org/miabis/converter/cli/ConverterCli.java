@@ -28,10 +28,10 @@ public class ConverterCli {
 	public static void main(String[] args) throws ParseException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 	
 		Option indexOpt = Option.builder("i")
-				.argName("input file")
+				.argName("input file(s)")
 				.longOpt("index")
-				.hasArg()
-				.desc("Index a file")
+				.hasArgs()
+				.desc("indexes a set of files. If only one file is supplied it asumes is a MIABIS TAB file, else five files must be supplied (sample, biobank, saple collection, study, contact information). The list of files must be separated by a space.")
 				.build();
 		
 		Option clustersNodesOpt = Option.builder("c")
@@ -95,20 +95,55 @@ public class ConverterCli {
 		
 			clustersNodes = cmd.hasOption("c") ? cmd.getOptionValue('c') : clustersNodes;
 			
-			String inputFile = cmd.getOptionValue("i");
+			String[] files = cmd.getOptionValues("i");
 			
-			AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath*:**/config.xml", "classpath*:**/job-csv-index.xml"});
-			ctx.registerShutdownHook();
+			if(files.length == 1){
+				AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath*:**/config.xml", "classpath*:**/job-csv-index.xml"});
+				ctx.registerShutdownHook();
+				
+				Job job = (Job) ctx.getBean("job1");
+				JobLauncher jobLauncher = (JobLauncher) ctx.getBean("jobLauncher");
+				
+				JobParametersBuilder pb = new JobParametersBuilder();
+				pb.addString("tab.input", "file:" + files[0]);
+				pb.addString("clusters.nodes", clustersNodes);
+				pb.addString("columns", Util.COLUMNS);
+				
+				jobLauncher.run(job, pb.toJobParameters());
+			}else if(files.length == 5){
+				
+				if(!cmd.hasOption("m")){
+					System.out.println("No mapping file defined.");
+					return;
+				} 
+				
+				String map = cmd.getOptionValue("m");
+				delimiter = cmd.hasOption("d") ? cmd.getOptionValue('d') : delimiter;
+				
+				AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"classpath*:**/database.xml", "classpath*:**/job-csv-db-index.xml"});
+				ctx.registerShutdownHook();
+				
+				JobParametersBuilder pb = new JobParametersBuilder();
+				pb.addString("sample", "file:" + files[0]);
+				pb.addString("biobank",  "file:" + files[1]);
+				pb.addString("sampleCollection", "file:" + files[2]);
+				pb.addString("study", "file:" + files[3]);
+				pb.addString("contactInfo", "file:" + files[4]);
+				
+				pb.addString("clusters.nodes", clustersNodes);
+				
+				//Map
+				pb.addString("map", map);
+				
+				JobLauncher jobLauncher = (JobLauncher) ctx.getBean("jobLauncher");
+				Job job = (Job) ctx.getBean("job1");
+				
+				jobLauncher.run(job, pb.toJobParameters());
+			}else{
+				printHelp();
+			}
 			
-			Job job = (Job) ctx.getBean("job1");
-			JobLauncher jobLauncher = (JobLauncher) ctx.getBean("jobLauncher");
 			
-			JobParametersBuilder pb = new JobParametersBuilder();
-			pb.addString("tab.input", "file:"+inputFile);
-			pb.addString("clusters.nodes", clustersNodes);
-			pb.addString("columns", Util.COLUMNS);
-			
-			jobLauncher.run(job, pb.toJobParameters());
 			
 		}else if(cmd.hasOption("t")){
 			
@@ -126,17 +161,17 @@ public class ConverterCli {
 			ctx.registerShutdownHook();
 			
 			JobParametersBuilder pb = new JobParametersBuilder();
-			pb.addString("sample", files[0]);
-			pb.addString("biobank",  files[1]);
-			pb.addString("sampleCollection", files[2]);
-			pb.addString("study", files[3]);
-			pb.addString("contactInfo", files[4]);
+			pb.addString("sample", "file:" + files[0]);
+			pb.addString("biobank",  "file:" + files[1]);
+			pb.addString("sampleCollection", "file:" + files[2]);
+			pb.addString("study", "file:" + files[3]);
+			pb.addString("contactInfo", "file:" + files[4]);
 			
 			//Map
 			pb.addString("map", map);
 			
 			//Output file
-			pb.addString("tab.output", "Miabis.tab");
+			pb.addString("tab.output", "file:Miabis.tab");
 			
 			JobLauncher jobLauncher = (JobLauncher) ctx.getBean("jobLauncher");
 			Job job = (Job) ctx.getBean("job1");
