@@ -41,7 +41,8 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(mt);
 		
 		//Storage Temperature
-		values.add(sample.getStorageTemperature() + "");
+		String st = (sample.getStorageTemperature() != null) ? sample.getStorageTemperature() + "" : "";
+		values.add(st);
 		
 		//Sampled Time
 		String sTime = "";
