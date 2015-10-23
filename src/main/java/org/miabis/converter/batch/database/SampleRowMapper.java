@@ -17,7 +17,6 @@ import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Sex;
 import org.miabis.exchange.schema.Study;
-import org.miabis.exchange.schema.Temperature;
 import org.miabis.exchange.schema.TimeUnit;
 import org.miabis.exchange.util.XsdDateTimeConverter;
 import org.springframework.jdbc.core.RowMapper;
@@ -88,7 +87,7 @@ public class SampleRowMapper implements RowMapper<Sample> {
 		
 		//Storage Temperature
 		try{
-			sample.setStorageTemperature(Temperature.fromValue(rs.getString(5)));
+			sample.setStorageTemperature(rs.getInt(5));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -172,28 +171,28 @@ public class SampleRowMapper implements RowMapper<Sample> {
 		List<InclusionCriteria> iLst = study.getInclusionCriteria();
 		encoder.getListStream(rs.getString(43)).forEach(i -> iLst.add(InclusionCriteria.fromValue(i)));
 		
-		//ContactInfo
-		study.setContactInformation(getContactInformation(44, rs));
-		
 		//PI
-		study.setPrincipalInvestigator(getContactInformation(53, rs));
+		study.setPrincipalInvestigator(rs.getString(44));
+		
+		//ContactInfo
+		study.setContactInformation(getContactInformation(45, rs));
 		
 		sample.setStudy(study);
 		
 		//Sample Collection
 		SampleCollection sc = new SampleCollection();
-		sc.setId(rs.getString(62));
-		sc.setAcronym(rs.getString(63));
-		sc.setName(rs.getString(64));
-		sc.setDescription(rs.getString(65));
+		sc.setId(rs.getString(54));
+		sc.setAcronym(rs.getString(55));
+		sc.setName(rs.getString(56));
+		sc.setDescription(rs.getString(57));
 		
 		List<DataCategory> dCat = sc.getDataCategory();
-		encoder.getListStream(rs.getString(66)).forEach(cat -> dCat.add(DataCategory.fromValue(cat)));
+		encoder.getListStream(rs.getString(58)).forEach(cat -> dCat.add(DataCategory.fromValue(cat)));
 		
 		List<CollectionType> ctLst = sc.getCollectionType();
-		encoder.getListStream(rs.getString(67)).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));
+		encoder.getListStream(rs.getString(59)).forEach(ct -> ctLst.add(CollectionType.fromValue(ct)));
 		
-		sc.setContactInformation(getContactInformation(68, rs));
+		sc.setContactInformation(getContactInformation(60, rs));
 		
 		sample.setSamplecollection(sc);
 		return sample;

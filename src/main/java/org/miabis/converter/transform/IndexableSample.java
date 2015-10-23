@@ -2,12 +2,6 @@ package org.miabis.converter.transform;
 
 import java.time.LocalDateTime;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.miabis.exchange.schema.Biobank;
 import org.miabis.exchange.schema.Disease;
 import org.miabis.exchange.schema.MaterialType;
@@ -16,12 +10,10 @@ import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Sex;
 import org.miabis.exchange.schema.Study;
-import org.miabis.exchange.schema.Temperature;
 import org.miabis.exchange.schema.TimeUnit;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import org.w3._2001.xmlschema.Adapter1;
 
 /**
  * Annotated version of the sample class so it can be indexed by elastic search.
@@ -36,7 +28,7 @@ public class IndexableSample{
     
     @Field(type = FieldType.Nested)
     protected MaterialType materialType;
-    protected Temperature storageTemperature;
+    protected int storageTemperature;
     protected LocalDateTime sampledTime;
     
     @Field(type = FieldType.Nested)
@@ -101,11 +93,11 @@ public class IndexableSample{
 		this.materialType = materialType;
 	}
 	
-    public Temperature getStorageTemperature() {
+    public int getStorageTemperature() {
 		return storageTemperature;
 	}
 	
-    public void setStorageTemperature(Temperature storageTemperature) {
+    public void setStorageTemperature(int storageTemperature) {
 		this.storageTemperature = storageTemperature;
 	}
 	

@@ -7,14 +7,12 @@ import org.miabis.converter.batch.util.Util;
 import org.miabis.exchange.schema.Biobank;
 import org.miabis.exchange.schema.CollectionType;
 import org.miabis.exchange.schema.DataCategory;
-import org.miabis.exchange.schema.Disease;
 import org.miabis.exchange.schema.InclusionCriteria;
 import org.miabis.exchange.schema.MaterialType;
 import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Sex;
 import org.miabis.exchange.schema.Study;
-import org.miabis.exchange.schema.Temperature;
 import org.miabis.exchange.schema.TimeUnit;
 import org.miabis.exchange.util.XsdDateTimeConverter;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
@@ -53,7 +51,7 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		
 		//Storage Temperature
 		try{
-			sample.setStorageTemperature(Temperature.fromValue(fieldSet.readString(columns[3])));
+			sample.setStorageTemperature(fieldSet.readInt(columns[3]));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -139,7 +137,7 @@ public class SampleFieldSetMapper implements FieldSetMapper<Sample>{
 		study.setName(fieldSet.readString(columns[28]));
 		study.setDescription(fieldSet.readString(columns[29]));
 		
-		study.setPrincipalInvestigator(encoder.decodeContactInformation(fieldSet.readString(columns[30])));
+		study.setPrincipalInvestigator(fieldSet.readString(columns[30]));
 		
 		//ContactInfo
 		study.setContactInformation(encoder.decodeContactInformation(fieldSet.readString(columns[31])));
