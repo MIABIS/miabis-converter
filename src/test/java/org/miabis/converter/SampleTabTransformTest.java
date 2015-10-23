@@ -22,7 +22,6 @@ import org.miabis.exchange.schema.Sample;
 import org.miabis.exchange.schema.SampleCollection;
 import org.miabis.exchange.schema.Sex;
 import org.miabis.exchange.schema.Study;
-import org.miabis.exchange.schema.Temperature;
 import org.miabis.exchange.schema.TimeUnit;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
@@ -109,7 +108,7 @@ public class SampleTabTransformTest {
 		sample.setParentSampleId("parentSample");
 		sample.setSampledTime(LocalDateTime.now());
 		sample.setMaterialType(MaterialType.C_DNA_M_RNA);
-		sample.setStorageTemperature(Temperature.CENTIGRADES_2_TO_10);
+		sample.setStorageTemperature(-10);
 		
 		OntologyTerm as = new OntologyTerm();
 		as.setId("id");
@@ -185,7 +184,7 @@ public class SampleTabTransformTest {
 		study.setName("study name");
 		study.setDescription("just a study");
 		
-		study.setPrincipalInvestigator(ci);
+		study.setPrincipalInvestigator("Some guy");
 		study.setContactInformation(ci);
 		
 		List<CollectionType> sDesign = study.getStudyDesign();
