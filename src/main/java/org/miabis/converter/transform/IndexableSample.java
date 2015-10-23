@@ -60,8 +60,12 @@ public class IndexableSample{
     	this.parentSampleId = sample.getParentSampleId();
     	
     	this.materialType = sample.getMaterialType();
-    	this.storageTemperature = sample.getStorageTemperature();
-        this.sampledTime = sample.getSampledTime();
+    	
+    	if(sample.getStorageTemperature() != null){
+    		this.storageTemperature = sample.getStorageTemperature();
+    	}
+        
+    	this.sampledTime = sample.getSampledTime();
         this.anatomicalSite = sample.getAnatomicalSite();
         
         this.biobank = sample.getBiobank();
