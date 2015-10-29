@@ -60,7 +60,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(encoder.encodeDisease(disease));
 		
 		//Sex
-		values.add(sample.getSex() != null ? sample.getSex().value() : "");
+		values.add((sample.getSex() != null) ? sample.getSex().value() : "");
 		
 		//Age
 		values.add(sample.getAgeLow() + "");
@@ -68,7 +68,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add((sample.getAgeUnit() != null) ? sample.getAgeUnit().value() : "");
 		
 		//Container
-		values.add(sample.getContainer() != null ? sample.getContainer() : "");
+		values.add(sample.getContainer());
 		
 		//Biobank
 		Biobank bb = (sample.getBiobank() != null) ? sample.getBiobank() : new Biobank();
@@ -78,8 +78,7 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(bb.getName());
 		values.add(bb.getUrl());
 		
-		String jp = (bb.getJuristicPerson() != null) ? bb.getJuristicPerson() : "";
-		values.add(jp);
+		values.add(bb.getJuristicPerson());
 		
 		values.add(encoder.encodeContactInformation(bb.getContactInformation()));
 			
@@ -117,15 +116,8 @@ public class SampleFieldExtractor implements FieldExtractor<Sample> {
 		values.add(study.getTotalNumberOfDonors() + "");
 		values.add(encoder.encodeValues(study.getInclusionCriteria()));
 		
-		ListIterator<String> it = values.listIterator();
-		while(it.hasNext()) {
-			String nxt = it.next();
-			
-			if(nxt == null){
-				it.set("");
-			}
-		}
-		
+		//Clean null values
+		values.replaceAll(v ->  (v == null) ? "" : v);
 		return values.toArray(new String[0]);
 	}
 }
