@@ -64,6 +64,13 @@ public class IndexableSample{
     	if(sample.getStorageTemperature() != null){
     		this.storageTemperature = sample.getStorageTemperature();
     	}
+    	
+    	this.sex = sample.getSex();
+    	this.container = sample.getContainer();
+    	this.ageLow = sample.getAgeLow();
+    	this.ageHigh = sample.getAgeHigh();
+    	this.ageUnit = sample.getAgeUnit();
+    	this.disease = sample.getDisease();
         
     	this.sampledTime = sample.getSampledTime();
         this.anatomicalSite = sample.getAnatomicalSite();
@@ -121,7 +128,55 @@ public class IndexableSample{
 		this.anatomicalSite = anatomicalSite;
 	}
 	
-    public Biobank getBiobank() {
+    public String getContainer() {
+		return container;
+	}
+
+	public void setContainer(String container) {
+		this.container = container;
+	}
+
+	public Disease getDisease() {
+		return disease;
+	}
+
+	public void setDisease(Disease disease) {
+		this.disease = disease;
+	}
+
+	public Sex getSex() {
+		return sex;
+	}
+
+	public void setSex(Sex sex) {
+		this.sex = sex;
+	}
+
+	public int getAgeLow() {
+		return ageLow;
+	}
+
+	public void setAgeLow(int ageLow) {
+		this.ageLow = ageLow;
+	}
+
+	public int getAgeHigh() {
+		return ageHigh;
+	}
+
+	public void setAgeHigh(int ageHigh) {
+		this.ageHigh = ageHigh;
+	}
+
+	public TimeUnit getAgeUnit() {
+		return ageUnit;
+	}
+
+	public void setAgeUnit(TimeUnit ageUnit) {
+		this.ageUnit = ageUnit;
+	}
+
+	public Biobank getBiobank() {
 		return biobank;
 	}
 	
