@@ -161,7 +161,7 @@
 	
 	<!-- Bean holding the index name. Hack so spring data can set the index name dinamically. -->
 	<bean id="indexName" class="java.lang.String">
-    	<constructor-arg value="myapp"/>
+    	<constructor-arg value="#{systemProperties.name}"/>
 	</bean>
 	
 	<!-- Writer -->

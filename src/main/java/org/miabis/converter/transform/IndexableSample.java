@@ -19,7 +19,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
  * Annotated version of the sample class so it can be indexed by elastic search.
  * @author jvillaveces
  */
-@Document(indexName = "sample")
+@Document(indexName = "#{@indexName}")
 public class IndexableSample{
 	
 	protected String id;

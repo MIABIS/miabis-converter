@@ -52,19 +52,26 @@ public class ConverterCli {
 				.argName("column delimiter")
 				.longOpt("delimiter")
 				.hasArg()
-				.desc("with -t: column delimiter. It defaults to TAB")
+				.desc("with -t, -i: column delimiter. It defaults to TAB")
 				.build();
 		
 		Option mapOpt = Option.builder("m")
 				.argName("map file")
 				.longOpt("map")
 				.hasArg()
-				.desc("with -t: miabis mapping file.")
+				.desc("with -t, -i: miabis mapping file.")
 				.build();
 		
 		Option helpOpt = Option.builder("h")
 				.longOpt("help")
 				.desc("print this message")
+				.build();
+		
+		Option nameOpt = Option.builder("n")
+				.argName("index name")
+				.longOpt("name")
+				.hasArg()
+				.desc("with -i: index name. Biobank name is recomended.")
 				.build();
 		
 		options = new Options();
@@ -76,6 +83,7 @@ public class ConverterCli {
 		options.addOption(transformOpt);
 		options.addOption(delimiterOpt);
 		options.addOption(mapOpt);
+		options.addOption(nameOpt);
 		
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd = null;
@@ -92,6 +100,15 @@ public class ConverterCli {
 		}
 		
 		if(cmd.hasOption("i")){
+			
+			if(!cmd.hasOption("n")){
+				System.err.println( "index name unspecified");
+				printHelp();
+				return;
+			}
+			
+			//Set Index Name
+			System.setProperty("name", cmd.getOptionValue("n").toLowerCase());
 		
 			clustersNodes = cmd.hasOption("c") ? cmd.getOptionValue('c') : clustersNodes;
 			
