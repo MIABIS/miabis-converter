@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:elasticsearch="http://www.springframework.org/schema/data/elasticsearch"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+		http://www.springframework.org/schema/data/elasticsearch http://www.springframework.org/schema/data/elasticsearch/spring-elasticsearch-1.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
+
+	<description>XML bean definitions to read a set of files, store them in a db and index them in elasticsearch</description>
+	
+	<context:property-placeholder location="classpath*:**/database.properties" />
+	
+	
+ 	<!-- Parent beans definition -->
+ 	
+ 	<!-- Parent Field Set Mapper -->
+ 	<bean id="parentFieldSetMapper" class="org.miabis.converter.transform.TitleAwareFieldSetMapper" abstract="true">
+		<constructor-arg value="#{jobParameters['map']}"/>
+	</bean>
+ 	
+ 	<!-- Parent line mapper -->
+ 	<bean id="parentLineMapper" class="org.miabis.converter.transform.LineTokenizerAwareLineMapper" abstract="true">
+		<property name="lineTokenizer">
+			<bean name="lineTokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+				<property name="delimiter">
+					<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
+				</property>
+				<property name="names">
+					<util:constant static-field="org.miabis.converter.batch.util.Util.COLUMNS" />
+				</property>
+			</bean>
+		</property>
+	</bean>
+ 	
+ 	<!-- Parent reader -->
+ 	<bean id="parentReader" class="org.miabis.converter.batch.reader.TitleAwareFlatFileItemReader" abstract="true">
+ 		<property name="hasTitles" value="true"/>
+		<property name="strict" value="true"/>
+		<property name="delimiter">
+			<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
+		</property>
+		<property name="comments">
+			<list>
+            	<value>#</value>
+        	</list>
+		</property>
+ 	</bean>
+ 	
+ 	<!-- Parent writer -->
+ 	<bean id="parentWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter" abstract="true">
+        <property name="dataSource" ref="dataSource" />
+        <property name="itemPreparedStatementSetter">
+        	<bean class="org.miabis.converter.batch.database.ArrayItemPreparedStatementSetter"/>
+        </property>
+  	</bean>
+ 	
+ 	<!-- Readers -->
+ 	<bean id="contactInfoReader"  parent="parentReader" scope="step">
+		<property name="resource" value="#{jobParameters['contactInfo']}"/>
+		<property name="lineMapper">
+			<bean parent="parentLineMapper">
+				<property name="fieldSetMapper">
+					<bean parent="parentFieldSetMapper">
+						<property name="dbNames" value="${db.contact.information.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	<bean id="biobankReader"  parent="parentReader" scope="step">
+		<property name="resource" value="#{jobParameters['biobank']}"/>
+		<property name="lineMapper">
+			<bean parent="parentLineMapper">
+				<property name="fieldSetMapper">
+					<bean parent="parentFieldSetMapper">
+						<property name="dbNames" value="${db.biobank.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	<bean id="sampleCollectionReader"  parent="parentReader" scope="step">
+		<property name="resource" value="#{jobParameters['sampleCollection']}"/>
+		<property name="lineMapper">
+			<bean parent="parentLineMapper">
+				<property name="fieldSetMapper">
+					<bean parent="parentFieldSetMapper">
+						<property name="dbNames" value="${db.sample.collection.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	<bean id="studyReader"  parent="parentReader" scope="step">
+		<property name="resource" value="#{jobParameters['study']}"/>
+		<property name="lineMapper">
+			<bean parent="parentLineMapper">
+				<property name="fieldSetMapper">
+					<bean parent="parentFieldSetMapper">
+						<property name="dbNames" value="${db.study.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	<bean id="sampleReader"  parent="parentReader" scope="step">
+		<property name="resource" value="#{jobParameters['sample']}"/>
+		<property name="lineMapper">
+			<bean parent="parentLineMapper">
+				<property name="fieldSetMapper">
+					<bean parent="parentFieldSetMapper">
+						<property name="dbNames" value="${db.sample.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
+	<!-- DB Item Reader -->
+	<bean id="jdbcCursorItemReader" class="org.springframework.batch.item.database.JdbcCursorItemReader" scope="step">
+		<property name="dataSource" ref="dataSource" />
+		<property name="sql">
+			<value>
+						<![CDATA[
+							select
+								SAMPLE.ID, SAMPLE.PARENT_SAMPLE_ID, SAMPLE.MATERIAL_TYPE, SAMPLE.CONTAINER, SAMPLE.STORAGE_TEMPERATURE, SAMPLE.SAMPLED_TIME, SAMPLE.ANATOMICAL_SITE_ONTOLOGY, SAMPLE.ANATOMICAL_SITE_VERSION, SAMPLE.ANATOMICAL_SITE_CODE, SAMPLE.ANATOMICAL_SITE_DESCRIPTION, SAMPLE.ONTOLOGY_ONTOLOGY, SAMPLE.ONTOLOGY_VERSION, SAMPLE.ONTOLOGY_CODE, SAMPLE.ONTOLOGY_DESCRIPTION, SAMPLE.ONTOLOGY_FREE_TEXT, SAMPLE.SEX, SAMPLE.AGE_LOW, SAMPLE.AGE_HIGH, SAMPLE.AGE_UNIT,
+								BIOBANK.ID AS BIOBANK_ID, BIOBANK.ACRONYM, BIOBANK.NAME, BIOBANK.URL, BIOBANK.JURISTIC_PERSON, BIOBANK.COUNTRY AS BIOBANK_COUNTRY, BIOBANK.DESCRIPTION,
+								BB_CI.ID AS BB_CI_ID, BB_CI.FIRST_NAME AS BB_CI_FIRST_NAME, BB_CI.LAST_NAME AS BB_CI_LAST_NAME, BB_CI.PHONE AS BB_CI_PHONE, BB_CI.EMAIL AS BB_CI_EMAIL, BB_CI.ADDRESS AS BB_CI_ADDRESS, BB_CI.ZIP AS BB_CI_ZIP, BB_CI.CITY AS BB_CI_CITY, BB_CI.COUNTRY AS BB_CI_COUNTRY,
+								STUDY.ID AS STUDY_ID, STUDY.NAME AS STUDY_NAME, STUDY.DESCRIPTION AS STUDY_DESCRIPTION, STUDY.STUDY_DESIGN AS STUDY_STUDY_DESIGN, STUDY.DATA_CATEGORY AS STUDY_DATA_CATEGORY, STUDY.TOTAL_NUMBER_OF_PARTICIPANTS, STUDY.TOTAL_NUMBER_OF_DONORS, STUDY.INCLUSION_CRITERIA, STUDY.PRINCIPAL_INVESTIGATOR,
+								S_CI.ID AS S_CI_ID, S_CI.FIRST_NAME AS S_CI_FIRST_NAME, S_CI.LAST_NAME AS S_CI_LAST_NAME, S_CI.PHONE AS S_CI_PHONE, S_CI.EMAIL AS S_CI_EMAIL, S_CI.ADDRESS AS S_CI_ADDRESS, S_CI.ZIP AS S_CI_ZIP, S_CI.CITY AS S_CI_CITY, S_CI.COUNTRY AS S_CI_COUNTRY,
+								SAMPLE_COLLECTION.ID AS SAMPLE_COLLECTION_ID, SAMPLE_COLLECTION.ACRONYM AS SAMPLE_COLLECTION_ACRONYM, SAMPLE_COLLECTION.NAME AS SAMPLE_COLLECTION_NAME, SAMPLE_COLLECTION.DESCRIPTION AS SAMPLE_COLLECTION_DESCRIPTION, SAMPLE_COLLECTION.DATA_CATEGORY AS SAMPLE_COLLECTION_DATA_CATEGORY, SAMPLE_COLLECTION.COLLECTION_TYPE AS SAMPLE_COLLECTION_COLLECTION_TYPE,
+								SC_CI.ID AS SC_CI_ID, SC_CI.FIRST_NAME AS SC_CI_FIRST_NAME, SC_CI.LAST_NAME AS SC_CI_LAST_NAME, SC_CI.PHONE AS SC_CI_PHONE, SC_CI.EMAIL AS SC_CI_EMAIL, SC_CI.ADDRESS AS SC_CI_ADDRESS, SC_CI.ZIP AS SC_CI_ZIP, SC_CI.CITY AS SC_CI_CITY, SC_CI.COUNTRY AS SC_CI_COUNTRY
+							
+							from
+								SAMPLE
+								LEFT JOIN BIOBANK ON SAMPLE.BIOBANK = BIOBANK.ID
+								LEFT JOIN CONTACT_INFORMATION AS BB_CI ON BIOBANK.CONTACT_INFORMATION = BB_CI.ID
+								LEFT JOIN STUDY ON SAMPLE.STUDY = STUDY.ID
+								LEFT JOIN CONTACT_INFORMATION AS S_CI ON STUDY.CONTACT_INFORMATION = S_CI.ID
+								LEFT JOIN SAMPLE_COLLECTION ON SAMPLE.SAMPLE_COLLECTION = SAMPLE_COLLECTION.ID 
+								LEFT JOIN CONTACT_INFORMATION AS SC_CI ON SAMPLE_COLLECTION.CONTACT_INFORMATION = SC_CI.ID
+								
+							order by SAMPLE.ID
+						]]>
+					</value>
+		</property>
+		<property name="rowMapper">
+			<bean class="org.miabis.converter.batch.database.SampleRowMapper" />
+		</property>
+		<property name="verifyCursorPosition" value="false"/>
+  	</bean>
+	
+	<!-- Bean holding the index name. Hack so spring data can set the index name dinamically. -->
+	<bean id="indexName" class="java.lang.String">
+    	<constructor-arg value="myapp"/>
+	</bean>
+	
+	<!-- Writer -->
+	<bean id="indexWriter" class="org.miabis.converter.batch.writers.ElasticSearchSampleWriter" scope="step">
+		<constructor-arg>
+			<bean name="elasticsearchTemplate" class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">
+		        <constructor-arg>
+		        	<elasticsearch:transport-client cluster-name="elasticsearch" client-transport-sniff="true" cluster-nodes="#{jobParameters['clusters.nodes']}" />
+		        </constructor-arg>
+		    </bean>
+		</constructor-arg>
+	</bean>
+	
+	<!-- Writer -->
+	<bean id="tabFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+		<!-- write to this tab file -->
+		<property name="resource" value="#{jobParameters['tab.output']}" />
+		<property name="shouldDeleteIfExists" value="true" />
+ 
+		<property name="lineAggregator">
+		  	<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter">
+					<util:constant static-field="org.springframework.batch.item.file.transform.DelimitedLineTokenizer.DELIMITER_TAB" />
+				</property>
+				<property name="fieldExtractor">
+					<bean class="org.miabis.converter.transform.SampleFieldExtractor"/>
+				</property>
+		   	</bean>
+		</property>
+  	</bean>
+	
+	<bean id="contactInfoWriter" parent="parentWriter" scope="step">
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into CONTACT_INFORMATION(ID, FIRST_NAME, LAST_NAME, PHONE, EMAIL, ADDRESS, ZIP, CITY, COUNTRY) 
+                    values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
+  	
+  	<bean id="biobankWriter" parent="parentWriter" scope="step">
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into BIOBANK(ID, ACRONYM, NAME, URL, JURISTIC_PERSON, CONTACT_INFORMATION, DESCRIPTION, COUNTRY) 
+                    values (?, ?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
+  	
+  	<bean id="sampleCollectionWriter" parent="parentWriter" scope="step">
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into SAMPLE_COLLECTION(ID, ACRONYM, NAME, DESCRIPTION, DATA_CATEGORY, COLLECTION_TYPE, CONTACT_INFORMATION) 
+                    values (?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
+  	
+  	<bean id="studyWriter" parent="parentWriter" scope="step">
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into STUDY(ID, NAME, DESCRIPTION, STUDY_DESIGN, DATA_CATEGORY, TOTAL_NUMBER_OF_PARTICIPANTS, TOTAL_NUMBER_OF_DONORS, INCLUSION_CRITERIA, CONTACT_INFORMATION, PRINCIPAL_INVESTIGATOR) 
+                    values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
+  	
+  	<bean id="sampleWriter" parent="parentWriter" scope="step">
+        <property name="sql">
+            <value>
+                <![CDATA[        
+                    insert into SAMPLE(ID, PARENT_SAMPLE_ID, MATERIAL_TYPE, CONTAINER, STORAGE_TEMPERATURE, SAMPLED_TIME,  ANATOMICAL_SITE_ONTOLOGY, ANATOMICAL_SITE_VERSION, ANATOMICAL_SITE_CODE, ANATOMICAL_SITE_DESCRIPTION,  ONTOLOGY_ONTOLOGY, ONTOLOGY_VERSION, ONTOLOGY_CODE, ONTOLOGY_DESCRIPTION, ONTOLOGY_FREE_TEXT, SEX, AGE_LOW, AGE_HIGH, AGE_UNIT, BIOBANK, SAMPLE_COLLECTION, STUDY) 
+                    values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ]]>
+            </value>
+        </property>
+  	</bean>
+</beans>
