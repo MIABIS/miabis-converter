@@ -7,27 +7,35 @@ At the moment the tool supports the following commands:
 
 ```
 usage: miabis-converter
- -c,--cluster <elastic search cluster>   with -i: elastic search cluster
-                                         group. It defaults to
-                                         localhost:9300
- -d,--delimiter <column delimiter>       with -t, -i: column delimiter. It
-                                         defaults to TAB
- -h,--help                               print this message
- -i,--index <input file(s)>              indexes a set of files. If only
-                                         one file is supplied it asumes is
-                                         a MIABIS TAB file, else five
-                                         files must be supplied (sample,
-                                         biobank, saple collection, study,
-                                         contact information). The list of
-                                         files must be separated by a
-                                         space.
- -m,--map <map file>                     with -t, -i: miabis mapping file.
- -t,--transform <input files>            transforms a set of files to
-                                         MIABIS TAB. Five files must be
-                                         supplied (sample, biobank, saple
-                                         collection, study, contact
-                                         information). The list of files
-                                         must be separated by a space.
+ -c,--cluster <elastic search cluster>      with -i: elastic search
+                                            cluster group. It defaults to
+                                            localhost:9300
+ -d,--delimiter <column delimiter>          with -t, -i: column delimiter.
+                                            It defaults to TAB
+ -h,--help                                  print this message
+ -i,--index <input file(s)>                 indexes a set of files. If
+                                            only one file is supplied it
+                                            asumes is a MIABIS TAB file,
+                                            else five files must be
+                                            supplied (sample, biobank,
+                                            saple collection, study,
+                                            contact information). The list
+                                            of files must be separated by
+                                            a space.
+ -m,--map <map file>                        with -t, -i: miabis mapping
+                                            file.
+ -n,--name <index name>                     with -i: index name. Biobank
+                                            name is recomended.
+ -t,--transform <input files>               transforms a set of files to
+                                            MIABIS TAB. Five files must be
+                                            supplied (sample, biobank,
+                                            saple collection, study,
+                                            contact information). The list
+                                            of files must be separated by
+                                            a space.
+ -z,--cname <elastic search cluster name>   with -i: elastic search
+                                            cluster name. It defaults to
+                                            elasticsearch
  ```
  
 ## Examples
@@ -42,6 +50,9 @@ usage: miabis-converter
  How to index a set of files:
  ```
  java -jar miabis-converter-1.0.0-SNAPSHOT.jar -i sample.txt biobank.txt sampleCollection.txt study.txt contactInfo.txt -m example.mapping.properties
+ ```
+ ``` 
+ java -jar miabis-converter-1.0.1-SNAPSHOT.jar -i samples.txt biobanks.txt sample_collections.txt studies.txt contacts.txt -m map.properties -n elixir -c localhost:9301 -z C2
  ```
  
 ### Tranform a set of files into MIABIS TAB:
