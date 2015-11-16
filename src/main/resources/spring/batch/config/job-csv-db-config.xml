@@ -161,7 +161,7 @@
 	
 	<!-- Bean holding the index name. Hack so spring data can set the index name dinamically. -->
 	<bean id="indexName" class="java.lang.String">
-    	<constructor-arg value="#{systemProperties.name}"/>
+    	<constructor-arg value="#{systemProperties.indexname}"/>
 	</bean>
 	
 	<!-- Writer -->
@@ -169,7 +169,7 @@
 		<constructor-arg>
 			<bean name="elasticsearchTemplate" class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">
 		        <constructor-arg>
-		        	<elasticsearch:transport-client cluster-name="elasticsearch" client-transport-sniff="true" cluster-nodes="#{jobParameters['clusters.nodes']}" />
+		        	<elasticsearch:transport-client cluster-name="#{jobParameters['cluster.name']}" client-transport-sniff="true" cluster-nodes="#{jobParameters['cluster.nodes']}" />
 		        </constructor-arg>
 		    </bean>
 		</constructor-arg>

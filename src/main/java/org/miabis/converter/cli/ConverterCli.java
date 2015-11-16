@@ -22,7 +22,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ConverterCli {
 	
 	private static Options options;
-	private static String clustersNodes = "localhost:9300";
+	private static String clusterNodes = "localhost:9300";
+	private static String clusterName = "elasticsearch";
 	private static String delimiter = Util.DELIMITER_TAB;
 
 	public static void main(String[] args) throws ParseException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
@@ -34,11 +35,18 @@ public class ConverterCli {
 				.desc("indexes a set of files. If only one file is supplied it asumes is a MIABIS TAB file, else five files must be supplied (sample, biobank, saple collection, study, contact information). The list of files must be separated by a space.")
 				.build();
 		
-		Option clustersNodesOpt = Option.builder("c")
+		Option clusterNodesOpt = Option.builder("c")
 				.argName("elastic search cluster")
 				.longOpt("cluster")
 				.hasArg()
-				.desc("with -i: elastic search cluster group. It defaults to "+clustersNodes)
+				.desc("with -i: elastic search cluster group. It defaults to "+clusterNodes)
+				.build();
+		
+		Option clusterNameOpt = Option.builder("z")
+				.argName("elastic search cluster name")
+				.longOpt("cname")
+				.hasArg()
+				.desc("with -i: elastic search cluster name. It defaults to "+clusterName)
 				.build();
 		
 		Option transformOpt = Option.builder("t")
@@ -77,7 +85,8 @@ public class ConverterCli {
 		options = new Options();
 		
 		options.addOption(indexOpt);
-		options.addOption(clustersNodesOpt);
+		options.addOption(clusterNodesOpt);
+		options.addOption(clusterNameOpt);
 		options.addOption(helpOpt);
 		
 		options.addOption(transformOpt);
@@ -108,9 +117,13 @@ public class ConverterCli {
 			}
 			
 			//Set Index Name
-			System.setProperty("name", cmd.getOptionValue("n").toLowerCase());
+			System.setProperty("indexname", cmd.getOptionValue("n").toLowerCase());
 		
-			clustersNodes = cmd.hasOption("c") ? cmd.getOptionValue('c') : clustersNodes;
+			clusterNodes = cmd.hasOption("c") ? cmd.getOptionValue("c") : clusterNodes;
+			clusterName = cmd.hasOption("z") ? cmd.getOptionValue("z") : clusterName;
+			
+			System.out.println(clusterNodes);
+			System.out.println(clusterName);
 			
 			String[] files = cmd.getOptionValues("i");
 			
@@ -123,7 +136,8 @@ public class ConverterCli {
 				
 				JobParametersBuilder pb = new JobParametersBuilder();
 				pb.addString("tab.input", "file:" + files[0]);
-				pb.addString("clusters.nodes", clustersNodes);
+				pb.addString("cluster.nodes", clusterNodes);
+				pb.addString("cluster.name", clusterName);
 				pb.addString("columns", Util.COLUMNS);
 				
 				jobLauncher.run(job, pb.toJobParameters());
@@ -147,7 +161,8 @@ public class ConverterCli {
 				pb.addString("study", "file:" + files[3]);
 				pb.addString("contactInfo", "file:" + files[4]);
 				
-				pb.addString("clusters.nodes", clustersNodes);
+				pb.addString("cluster.nodes", clusterNodes);
+				pb.addString("cluster.name", clusterName);
 				
 				//Map
 				pb.addString("map", map);
