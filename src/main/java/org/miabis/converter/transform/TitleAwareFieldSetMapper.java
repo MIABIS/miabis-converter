@@ -6,12 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
 
 public class TitleAwareFieldSetMapper implements FieldSetMapper<String[]> {
 
+	final static Logger logger = Logger.getLogger(TitleAwareFieldSetMapper.class);
+	
 	private String[] dbNames;
 	private Properties properties;
 	
@@ -26,6 +29,8 @@ public class TitleAwareFieldSetMapper implements FieldSetMapper<String[]> {
 				properties.load(this.getClass().getClassLoader().getResourceAsStream(propertiesPath));
 			} catch (IOException e1) {
 				e1.printStackTrace();
+			}catch(Exception e2){
+				logger.error("Cannot load properties file '"+propertiesPath+"'.", e2);
 			}
 		}
 	}
