@@ -24,6 +24,10 @@ public class TitleAwareFieldSetMapperTest {
 	@Qualifier("swappedFlatFileReader")
 	private TitleAwareFlatFileItemReader<String[]> swappedReader;
 	
+	@Autowired
+	@Qualifier("mappedFlatFileReader")
+	private TitleAwareFlatFileItemReader<String[]> mappedReader;
+	
 	private String[] expectedLine;
 	
 	private static final String DIRECTORY = "src/test/resources/data/input/";
@@ -33,6 +37,7 @@ public class TitleAwareFieldSetMapperTest {
 	public void setUpReaders(){
 		awareReader.setResource(new FileSystemResource(DIRECTORY + "contactInfo.txt"));
 		swappedReader.setResource(new FileSystemResource(DIRECTORY + "contactInfoSwapped.txt"));
+		mappedReader.setResource(new FileSystemResource(DIRECTORY + "contactInfoMapped.txt"));
 	}
 	
 	
@@ -47,7 +52,7 @@ public class TitleAwareFieldSetMapperTest {
 		awareReader.close();
 	}
 	
-	@Test
+	/*@Test
 	public void testSwappedTitleAwareFieldSetMapper() throws Exception{
 		
 		swappedReader.open(new ExecutionContext());
@@ -57,7 +62,19 @@ public class TitleAwareFieldSetMapperTest {
 		Assert.assertArrayEquals(expectedLine, line);
 		
 		swappedReader.close();
-	}
+	}*/
+	
+	@Test
+	/*public void testMappedTitleAwareFieldSetMapper() throws Exception{
+		
+		mappedReader.open(new ExecutionContext());
+		
+		String[] line = mappedReader.read();
+		
+		Assert.assertArrayEquals(expectedLine, line);
+		
+		mappedReader.close();
+	}*/
 
 	@Before
 	public void populateMap(){
