@@ -159,20 +159,11 @@
 		<property name="verifyCursorPosition" value="false"/>
   	</bean>
 	
-	<!-- Bean holding the index name. Hack so spring data can set the index name dinamically. -->
-	<bean id="indexName" class="java.lang.String">
-    	<constructor-arg value="#{systemProperties.indexname}"/>
-	</bean>
-	
 	<!-- Writer -->
 	<bean id="indexWriter" class="org.miabis.converter.batch.writers.ElasticSearchSampleWriter" scope="step">
-		<constructor-arg>
-			<bean name="elasticsearchTemplate" class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">
-		        <constructor-arg>
-		        	<elasticsearch:transport-client cluster-name="#{jobParameters['cluster.name']}" client-transport-sniff="true" cluster-nodes="#{jobParameters['cluster.nodes']}" />
-		        </constructor-arg>
-		    </bean>
-		</constructor-arg>
+		<property name="clusterNodes" value="#{jobParameters['cluster.nodes']}" />
+		<property name="clusterName" value="#{jobParameters['cluster.name']}" />
+		<property name="index" value="#{jobParameters['index.name']}" />
 	</bean>
 	
 	<!-- Writer -->
