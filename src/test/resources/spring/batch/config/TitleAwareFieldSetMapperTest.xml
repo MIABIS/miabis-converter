@@ -79,4 +79,38 @@
 		    </bean>
 		</property>
 	</bean>
+	
+	<bean id="mappedFlatFileReader" class="org.miabis.converter.batch.reader.TitleAwareFlatFileItemReader">
+		<property name="hasTitles" value="true"/>
+		<property name="strict" value="true"/>
+		<property name="delimiter">
+			<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
+		</property>
+		<property name="comments">
+			<list>
+            	<value>#</value>
+        	</list>
+		</property> 
+		<property name="lineMapper">
+			<bean id="lineMapper" class="org.miabis.converter.transform.LineTokenizerAwareLineMapper">
+				<property name="lineTokenizer">
+					<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="delimiter">
+							<util:constant static-field="org.miabis.converter.batch.util.Util.DELIMITER_TAB" />
+						</property>
+						<property name="names">
+							<util:constant static-field="org.miabis.converter.batch.util.Util.COLUMNS" />
+						</property>
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean class="org.miabis.converter.transform.TitleAwareFieldSetMapper">
+						<constructor-arg value="example.mapping.properties"/>
+						<property name="dbNames" value="${db.contact.information.names}" />
+					</bean>
+		 		</property>
+		    </bean>
+		</property>
+	</bean>
+	
 </beans>

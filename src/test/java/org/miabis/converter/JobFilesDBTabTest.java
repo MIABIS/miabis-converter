@@ -2,6 +2,7 @@ package org.miabis.converter;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.Job;
@@ -23,6 +24,12 @@ public class JobFilesDBTabTest {
 
 	@Autowired
 	private Job job;
+	
+	@Before
+	public void setup(){
+		//Set Index Name to be able to instantiate job
+		System.setProperty("indexname", "test");
+	}
 	
 	@Test
 	public void testSimpleProperties() throws Exception {
