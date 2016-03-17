@@ -15,6 +15,7 @@
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<spring.framework.version>4.2.2.RELEASE</spring.framework.version>
 		<spring.batch.version>3.0.5.RELEASE</spring.batch.version>
+		<es.version>2.2.1</es.version>
 		<jdk.version>1.8</jdk.version>
 	</properties>
 	
@@ -122,12 +123,37 @@
 		</dependency>
 		
 		<dependency>
+		    <groupId>org.elasticsearch</groupId>
+		    <artifactId>elasticsearch</artifactId>
+		    <version>${es.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>4.2.1</version>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.7.2</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>uk.co.jemos.podam</groupId>
+			<artifactId>podam</artifactId>
+			<version>2.3.5.RELEASE</version>
+		</dependency>
+		
+		<!--<dependency>
 		    <groupId>org.springframework.data</groupId>
 		    <artifactId>spring-data-elasticsearch</artifactId>
 		    <version>1.3.0.RELEASE</version>
 		</dependency>
 		
-		<!-- Spring jdbc, for database
+		 Spring jdbc, for database
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
