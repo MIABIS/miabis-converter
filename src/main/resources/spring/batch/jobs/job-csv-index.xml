@@ -23,14 +23,11 @@
 		<property name="schema" value="classpath*:**sample-exchange-schema.xsd"/>
 	</bean> -->
 	
+	<!-- Writer -->
 	<bean id="indexWriter" class="org.miabis.converter.batch.writers.ElasticSearchSampleWriter" scope="step">
-		<constructor-arg>
-			<bean name="elasticsearchTemplate" class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">
-		        <constructor-arg>
-		        	<elasticsearch:transport-client cluster-name="elasticsearch" client-transport-sniff="true" cluster-nodes="#{jobParameters['clusters.nodes']}" />
-		        </constructor-arg>
-		    </bean>
-		</constructor-arg>
+		<property name="clusterNodes" value="#{jobParameters['cluster.nodes']}" />
+		<property name="clusterName" value="#{jobParameters['cluster.name']}" />
+		<property name="index" value="#{jobParameters['index.name']}" />
 	</bean>
 	
 	<!-- TAB Item Reader -->
