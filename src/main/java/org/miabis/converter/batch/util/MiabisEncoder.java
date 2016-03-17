@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Stream;
 
-import org.elasticsearch.common.base.Joiner;
-import org.elasticsearch.common.base.Splitter;
-import org.elasticsearch.common.collect.Lists;
 import org.miabis.exchange.schema.ContactInformation;
 import org.miabis.exchange.schema.Disease;
 import org.miabis.exchange.schema.OntologyTerm;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 public class MiabisEncoder {
 

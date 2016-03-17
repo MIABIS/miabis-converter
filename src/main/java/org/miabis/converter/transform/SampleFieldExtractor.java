@@ -2,7 +2,6 @@ package org.miabis.converter.transform;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.miabis.converter.batch.util.MiabisEncoder;
 import org.miabis.exchange.schema.Biobank;

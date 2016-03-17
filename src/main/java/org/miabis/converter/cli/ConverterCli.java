@@ -18,7 +18,6 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-//@ContextConfiguration(locations={"/spring/batch/config/config.xml", "/spring/batch/jobs/job-csv-index.xml"})
 public class ConverterCli {
 	
 	private static Options options;
@@ -116,14 +115,8 @@ public class ConverterCli {
 				return;
 			}
 			
-			//Set Index Name
-			System.setProperty("indexname", cmd.getOptionValue("n").toLowerCase());
-		
 			clusterNodes = cmd.hasOption("c") ? cmd.getOptionValue("c") : clusterNodes;
 			clusterName = cmd.hasOption("z") ? cmd.getOptionValue("z") : clusterName;
-			
-			System.out.println(clusterNodes);
-			System.out.println(clusterName);
 			
 			String[] files = cmd.getOptionValues("i");
 			
@@ -139,6 +132,7 @@ public class ConverterCli {
 				pb.addString("cluster.nodes", clusterNodes);
 				pb.addString("cluster.name", clusterName);
 				pb.addString("columns", Util.COLUMNS);
+				pb.addString("index.name", cmd.getOptionValue("n").toLowerCase());
 				
 				jobLauncher.run(job, pb.toJobParameters());
 			}else if(files.length == 5){
@@ -163,6 +157,7 @@ public class ConverterCli {
 				
 				pb.addString("cluster.nodes", clusterNodes);
 				pb.addString("cluster.name", clusterName);
+				pb.addString("index.name", cmd.getOptionValue("n").toLowerCase());
 				
 				//Map
 				pb.addString("map", map);

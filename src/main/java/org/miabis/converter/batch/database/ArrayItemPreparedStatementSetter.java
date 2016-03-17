@@ -3,7 +3,6 @@ package org.miabis.converter.batch.database;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
 import org.springframework.batch.item.database.ItemPreparedStatementSetter;
 import org.springframework.jdbc.core.SqlTypeValue;
 import org.springframework.jdbc.core.StatementCreatorUtils;
